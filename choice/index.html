@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Голосование</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&display=swap" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      padding-block: 40px;
+      min-height: 100%;
+    }
+    .card {
+      width: 100%;
+      max-width: 480px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      padding: 32px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    h1 {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 800;
+    }
+    .sub {
+      margin: 4px 0 0;
+      color: var(--ink-secondary);
+      font-size: 0.95rem;
+    }
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .option {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      width: 100%;
+      border: 1.5px solid var(--border);
+      background: var(--surface-raised);
+      border-radius: 14px;
+      padding: 18px 20px;
+      cursor: pointer;
+      text-align: left;
+      transition: border-color 0.15s ease, background 0.15s ease, transform 0.1s ease;
+      color: var(--ink);
+    }
+    .option:hover {
+      border-color: var(--accent);
+    }
+    .option:active {
+      transform: scale(0.99);
+    }
+    .option:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+    .option .letter {
+      flex: none;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Manrope", sans-serif;
+      font-weight: 800;
+      font-size: 1.15rem;
+      color: #fff;
+    }
+    .option[data-opt="A"] .letter { background: var(--series-a); }
+    .option[data-opt="B"] .letter { background: var(--series-b); }
+    .option[data-opt="C"] .letter { background: var(--series-c); }
+    .option .label {
+      font-size: 1.02rem;
+      font-weight: 600;
+      overflow-wrap: anywhere;
+    }
+    .option .label .hint {
+      display: block;
+      font-weight: 400;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    .option[disabled] {
+      cursor: default;
+      opacity: 0.55;
+    }
+    .status {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      border-radius: 12px;
+      padding: 14px 16px;
+      background: color-mix(in srgb, var(--good) 12%, var(--surface));
+      color: var(--ink);
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+    .status.show { display: flex; }
+    .status .dot {
+      flex: none;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--good);
+    }
+    .error {
+      display: none;
+      color: #b3261e;
+      font-size: 0.9rem;
+    }
+    .error.show { display: block; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div>
+      <p class="eyebrow">Опрос</p>
+      <h1>Выберите один вариант</h1>
+      <p class="sub">Голос учитывается один раз. Результаты появятся на экране преподавателя.</p>
+    </div>
+
+    <div class="options" id="options" role="group" aria-label="Варианты ответа">
+      <button class="option" data-opt="A" type="button">
+        <span class="letter">A</span>
+        <span class="label" data-label-for="A">Вариант A</span>
+      </button>
+      <button class="option" data-opt="B" type="button">
+        <span class="letter">B</span>
+        <span class="label" data-label-for="B">Вариант B</span>
+      </button>
+      <button class="option" data-opt="C" type="button">
+        <span class="letter">C</span>
+        <span class="label" data-label-for="C">Вариант C</span>
+      </button>
+    </div>
+
+    <div class="status" id="status" role="status" aria-live="polite">
+      <span class="dot"></span>
+      <span id="statusText">Ваш голос учтён</span>
+    </div>
+    <p class="error" id="error" role="alert"></p>
+  </main>
+
+  <script>
+    const STORAGE_KEY = 'pollVote';
+    const optionsEl = document.getElementById('options');
+    const statusEl = document.getElementById('status');
+    const statusTextEl = document.getElementById('statusText');
+    const errorEl = document.getElementById('error');
+    let currentState = null;
+
+    function applyLabels(state) {
+      ['A', 'B', 'C'].forEach((key) => {
+        const labelEl = document.querySelector(`[data-label-for="${key}"]`);
+        const text = (state.labels && state.labels[key]) || '';
+        labelEl.textContent = `Вариант ${key}`;
+        if (text) {
+          const hint = document.createElement('span');
+          hint.className = 'hint';
+          hint.textContent = text;
+          labelEl.appendChild(hint);
+        }
+      });
+    }
+
+    function getSavedVote() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+      } catch {
+        return null;
+      }
+    }
+
+    function saveVote(round, option) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ round, option }));
+      } catch {}
+    }
+
+    function lockUI(chosenOption) {
+      document.querySelectorAll('.option').forEach((btn) => {
+        btn.disabled = true;
+        if (btn.dataset.opt === chosenOption) {
+          btn.style.borderColor = 'var(--accent)';
+        }
+      });
+      statusTextEl.textContent = chosenOption
+        ? `Ваш голос за «${chosenOption}» учтён`
+        : 'Ваш голос учтён';
+      statusEl.classList.add('show');
+    }
+
+    function unlockUI() {
+      document.querySelectorAll('.option').forEach((btn) => {
+        btn.disabled = false;
+        btn.style.borderColor = '';
+      });
+      statusEl.classList.remove('show');
+    }
+
+    async function loadState() {
+      const res = await fetch('api/state.php');
+      const state = await res.json();
+      currentState = state;
+      applyLabels(state);
+      const saved = getSavedVote();
+      if (saved && saved.round === state.round) {
+        lockUI(saved.option);
+      } else {
+        unlockUI();
+      }
+    }
+
+    async function vote(option) {
+      errorEl.classList.remove('show');
+      document.querySelectorAll('.option').forEach((btn) => (btn.disabled = true));
+      try {
+        const res = await fetch('api/vote.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ option, round: currentState.round }),
+        });
+        if (res.status === 409) {
+          const body = await res.json();
+          currentState = body.state;
+          applyLabels(currentState);
+          errorEl.textContent = 'Преподаватель начал новое голосование. Выберите вариант ещё раз.';
+          errorEl.classList.add('show');
+          unlockUI();
+          return;
+        }
+        if (!res.ok) throw new Error('vote failed');
+        const state = await res.json();
+        currentState = state;
+        saveVote(state.round, option);
+        lockUI(option);
+      } catch (e) {
+        errorEl.textContent = 'Не удалось отправить голос. Проверьте соединение и попробуйте снова.';
+        errorEl.classList.add('show');
+        unlockUI();
+      }
+    }
+
+    optionsEl.addEventListener('click', (e) => {
+      const btn = e.target.closest('.option');
+      if (!btn || btn.disabled) return;
+      vote(btn.dataset.opt);
+    });
+
+    loadState();
+    setInterval(loadState, 4000);
+  </script>
+</body>
+</html>

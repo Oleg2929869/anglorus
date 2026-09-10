@@ -1,0 +1,13 @@
+{
+  "name": "student-poll-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Простое веб-приложение для опроса студентов (A/B/C) с live-результатами на проекторе и админкой",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

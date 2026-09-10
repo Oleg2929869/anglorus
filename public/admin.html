@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Панель преподавателя</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&display=swap" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      padding: 24px;
+      padding-block: 32px;
+      display: flex;
+      justify-content: center;
+    }
+    .wrap {
+      width: 100%;
+      max-width: 720px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    h1 {
+      margin: 0;
+      font-size: 1.7rem;
+      font-weight: 800;
+    }
+    .sub {
+      color: var(--ink-secondary);
+      margin: 4px 0 0;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .card h2 {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 800;
+    }
+    .row {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+    }
+    .letter-chip {
+      flex: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-family: "Manrope", sans-serif;
+      font-weight: 800;
+    }
+    .row[data-opt="A"] .letter-chip { background: var(--series-a); }
+    .row[data-opt="B"] .letter-chip { background: var(--series-b); }
+    .row[data-opt="C"] .letter-chip { background: var(--series-c); }
+    input[type="text"] {
+      flex: 1;
+      min-width: 0;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1.5px solid var(--border);
+      background: var(--surface-raised);
+      color: var(--ink);
+      font-size: 0.98rem;
+    }
+    input[type="text"]:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 1px;
+    }
+    .count-badge {
+      flex: none;
+      min-width: 44px;
+      text-align: right;
+      font-weight: 700;
+      color: var(--ink-secondary);
+    }
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    button.primary {
+      background: var(--accent);
+      color: var(--accent-ink);
+      border: none;
+      border-radius: 10px;
+      padding: 11px 20px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+    button.primary:hover { filter: brightness(1.06); }
+    button.danger {
+      background: transparent;
+      color: #b3261e;
+      border: 1.5px solid rgba(179, 38, 30, 0.4);
+      border-radius: 10px;
+      padding: 11px 20px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+    button.danger:hover { background: rgba(179, 38, 30, 0.08); }
+    button.ghost {
+      background: transparent;
+      color: var(--ink-secondary);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 11px 20px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+    .save-hint {
+      font-size: 0.85rem;
+      color: var(--good);
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+    .save-hint.show { opacity: 1; }
+    .links {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 0.9rem;
+      color: var(--ink-secondary);
+    }
+    .links code {
+      background: var(--surface-raised);
+      border: 1px solid var(--border);
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+    }
+    dialog {
+      border: none;
+      border-radius: 16px;
+      padding: 0;
+      background: var(--surface);
+      color: var(--ink);
+      box-shadow: var(--shadow);
+      max-width: 380px;
+    }
+    dialog::backdrop {
+      background: rgba(11, 11, 11, 0.4);
+    }
+    .dialog-body {
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .dialog-body h3 { margin: 0; font-size: 1.1rem; }
+    .dialog-body p { margin: 0; color: var(--ink-secondary); font-size: 0.92rem; }
+    .dialog-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Панель преподавателя</p>
+      <h1>Управление голосованием</h1>
+      <p class="sub">Раунд № <span class="tabular" id="roundNum">1</span></p>
+    </div>
+
+    <section class="card">
+      <h2>Варианты ответа и подписи</h2>
+      <div class="row" data-opt="A">
+        <span class="letter-chip">A</span>
+        <input type="text" id="labelA" maxlength="200" placeholder="Например: правильный ответ" />
+        <span class="count-badge tabular" id="countA">0</span>
+      </div>
+      <div class="row" data-opt="B">
+        <span class="letter-chip">B</span>
+        <input type="text" id="labelB" maxlength="200" placeholder="Подпись к варианту B" />
+        <span class="count-badge tabular" id="countB">0</span>
+      </div>
+      <div class="row" data-opt="C">
+        <span class="letter-chip">C</span>
+        <input type="text" id="labelC" maxlength="200" placeholder="Подпись к варианту C" />
+        <span class="count-badge tabular" id="countC">0</span>
+      </div>
+      <div class="actions">
+        <button class="primary" id="saveLabels">Сохранить подписи</button>
+        <span class="save-hint" id="saveHint">Сохранено</span>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Результаты</h2>
+      <p class="sub" style="margin:0">Всего голосов: <strong class="tabular" id="total">0</strong></p>
+      <div class="actions">
+        <button class="danger" id="resetVotes">Удалить результаты (новый раунд)</button>
+        <button class="ghost" id="resetAll">Сбросить всё (подписи + результаты)</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Ссылки</h2>
+      <div class="links">
+        <div>Для студентов: <code id="voteUrl"></code></div>
+        <div>Для проектора: <code id="resultsUrl"></code></div>
+      </div>
+    </section>
+  </div>
+
+  <dialog id="confirmDialog">
+    <div class="dialog-body">
+      <h3 id="confirmTitle">Удалить результаты?</h3>
+      <p id="confirmText">Все голоса текущего раунда будут обнулены. Студенты смогут проголосовать заново.</p>
+      <div class="dialog-actions">
+        <button class="ghost" id="confirmCancel">Отмена</button>
+        <button class="danger" id="confirmOk">Удалить</button>
+      </div>
+    </div>
+  </dialog>
+
+  <script>
+    const els = {
+      round: document.getElementById('roundNum'),
+      total: document.getElementById('total'),
+      labelA: document.getElementById('labelA'),
+      labelB: document.getElementById('labelB'),
+      labelC: document.getElementById('labelC'),
+      countA: document.getElementById('countA'),
+      countB: document.getElementById('countB'),
+      countC: document.getElementById('countC'),
+      saveHint: document.getElementById('saveHint'),
+    };
+
+    const labelInputs = { A: els.labelA, B: els.labelB, C: els.labelC };
+    let editing = false;
+    [els.labelA, els.labelB, els.labelC].forEach((input) => {
+      input.addEventListener('focus', () => (editing = true));
+      input.addEventListener('blur', () => (editing = false));
+    });
+
+    function render(state) {
+      els.round.textContent = state.round;
+      const votes = state.votes || { A: 0, B: 0, C: 0 };
+      els.total.textContent = votes.A + votes.B + votes.C;
+      els.countA.textContent = votes.A;
+      els.countB.textContent = votes.B;
+      els.countC.textContent = votes.C;
+      if (!editing) {
+        ['A', 'B', 'C'].forEach((key) => {
+          labelInputs[key].value = (state.labels && state.labels[key]) || '';
+        });
+      }
+    }
+
+    async function loadState() {
+      const res = await fetch('/api/state', { cache: 'no-store' });
+      render(await res.json());
+    }
+
+    document.getElementById('saveLabels').addEventListener('click', async () => {
+      const body = {
+        A: els.labelA.value,
+        B: els.labelB.value,
+        C: els.labelC.value,
+      };
+      const res = await fetch('/api/admin/labels', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      render(await res.json());
+      els.saveHint.classList.add('show');
+      setTimeout(() => els.saveHint.classList.remove('show'), 1600);
+    });
+
+    const dialog = document.getElementById('confirmDialog');
+    const confirmTitle = document.getElementById('confirmTitle');
+    const confirmText = document.getElementById('confirmText');
+    let pendingAction = null;
+
+    function openConfirm(title, text, action) {
+      confirmTitle.textContent = title;
+      confirmText.textContent = text;
+      pendingAction = action;
+      dialog.showModal();
+    }
+
+    document.getElementById('confirmCancel').addEventListener('click', () => dialog.close());
+    document.getElementById('confirmOk').addEventListener('click', async () => {
+      dialog.close();
+      if (pendingAction) await pendingAction();
+    });
+
+    document.getElementById('resetVotes').addEventListener('click', () => {
+      openConfirm(
+        'Удалить результаты?',
+        'Все голоса текущего раунда будут обнулены. Студенты смогут проголосовать заново. Подписи вариантов сохранятся.',
+        async () => {
+          const res = await fetch('/api/admin/reset', { method: 'POST' });
+          render(await res.json());
+        }
+      );
+    });
+
+    document.getElementById('resetAll').addEventListener('click', () => {
+      openConfirm(
+        'Сбросить всё?',
+        'Будут удалены и результаты, и подписи вариантов A, B, C.',
+        async () => {
+          const res = await fetch('/api/admin/reset-all', { method: 'POST' });
+          render(await res.json());
+        }
+      );
+    });
+
+    document.getElementById('voteUrl').textContent = `${location.origin}/`;
+    document.getElementById('resultsUrl').textContent = `${location.origin}/results.html`;
+
+    loadState();
+    setInterval(loadState, 3000);
+  </script>
+</body>
+</html>

@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Результаты голосования</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&display=swap" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
+      padding: clamp(20px, 4vw, 56px);
+      padding-block: clamp(20px, 4vh, 48px);
+      gap: clamp(20px, 4vh, 40px);
+    }
+    header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(1.6rem, 3.2vw, 2.4rem);
+      font-weight: 800;
+    }
+    .meta {
+      display: flex;
+      gap: 24px;
+      align-items: baseline;
+      color: var(--ink-secondary);
+      font-size: clamp(0.95rem, 1.4vw, 1.15rem);
+    }
+    .meta strong {
+      color: var(--ink);
+      font-family: "Manrope", sans-serif;
+      font-weight: 800;
+    }
+    .chart-wrap {
+      flex: 1;
+      display: flex;
+      align-items: flex-end;
+      gap: clamp(24px, 5vw, 80px);
+      padding: clamp(16px, 3vw, 40px);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+    .chart-wrap::before {
+      content: "";
+      position: absolute;
+      left: clamp(16px, 3vw, 40px);
+      right: clamp(16px, 3vw, 40px);
+      bottom: clamp(64px, 12vh, 96px);
+      border-top: 1px solid var(--gridline);
+    }
+    .bar-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      height: 100%;
+      gap: 12px;
+      min-width: 0;
+    }
+    .value {
+      font-family: "Manrope", sans-serif;
+      font-weight: 800;
+      font-size: clamp(1.8rem, 4.5vw, 3.4rem);
+      line-height: 1;
+    }
+    .pct {
+      color: var(--ink-secondary);
+      font-size: clamp(0.9rem, 1.3vw, 1.15rem);
+      font-weight: 600;
+    }
+    .bar-track {
+      width: 100%;
+      max-width: 180px;
+      flex: 1;
+      display: flex;
+      align-items: flex-end;
+      min-height: 0;
+    }
+    .bar {
+      width: 100%;
+      border-radius: 10px 10px 4px 4px;
+      transition: height 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+      min-height: 4px;
+    }
+    .bar-col[data-opt="A"] .bar { background: var(--series-a); }
+    .bar-col[data-opt="B"] .bar { background: var(--series-b); }
+    .bar-col[data-opt="C"] .bar { background: var(--series-c); }
+    .col-footer {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      height: clamp(56px, 10vh, 80px);
+      justify-content: center;
+      text-align: center;
+    }
+    .letter-badge {
+      flex: none;
+      width: clamp(36px, 4.5vw, 48px);
+      height: clamp(36px, 4.5vw, 48px);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-family: "Manrope", sans-serif;
+      font-weight: 800;
+      font-size: clamp(1rem, 1.6vw, 1.3rem);
+    }
+    .bar-col[data-opt="A"] .letter-badge { background: var(--series-a); }
+    .bar-col[data-opt="B"] .letter-badge { background: var(--series-b); }
+    .bar-col[data-opt="C"] .letter-badge { background: var(--series-c); }
+    .option-label {
+      font-weight: 700;
+      font-size: clamp(0.95rem, 1.5vw, 1.25rem);
+      text-align: left;
+      overflow-wrap: anywhere;
+    }
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Результаты голосования</h1>
+    <div class="meta">
+      <span>Всего голосов: <strong class="tabular" id="total">0</strong></span>
+    </div>
+  </header>
+
+  <div class="chart-wrap" id="chart">
+    <div class="bar-col" data-opt="A">
+      <span class="value tabular" data-value="A">0</span>
+      <span class="pct" data-pct="A">0%</span>
+      <div class="bar-track"><div class="bar" data-bar="A" style="height: 0%"></div></div>
+      <div class="col-footer">
+        <span class="letter-badge">A</span>
+        <span class="option-label" data-label="A">Вариант A</span>
+      </div>
+    </div>
+    <div class="bar-col" data-opt="B">
+      <span class="value tabular" data-value="B">0</span>
+      <span class="pct" data-pct="B">0%</span>
+      <div class="bar-track"><div class="bar" data-bar="B" style="height: 0%"></div></div>
+      <div class="col-footer">
+        <span class="letter-badge">B</span>
+        <span class="option-label" data-label="B">Вариант B</span>
+      </div>
+    </div>
+    <div class="bar-col" data-opt="C">
+      <span class="value tabular" data-value="C">0</span>
+      <span class="pct" data-pct="C">0%</span>
+      <div class="bar-track"><div class="bar" data-bar="C" style="height: 0%"></div></div>
+      <div class="col-footer">
+        <span class="letter-badge">C</span>
+        <span class="option-label" data-label="C">Вариант C</span>
+      </div>
+    </div>
+  </div>
+
+  <footer>Обновляется автоматически</footer>
+
+  <script>
+    const totalEl = document.getElementById('total');
+
+    function render(state) {
+      const votes = state.votes || { A: 0, B: 0, C: 0 };
+      const total = votes.A + votes.B + votes.C;
+      const max = Math.max(votes.A, votes.B, votes.C, 1);
+      totalEl.textContent = total;
+      ['A', 'B', 'C'].forEach((key) => {
+        const v = votes[key] || 0;
+        const pct = total ? Math.round((v / total) * 100) : 0;
+        document.querySelector(`[data-value="${key}"]`).textContent = v;
+        document.querySelector(`[data-pct="${key}"]`).textContent = `${pct}%`;
+        const barHeight = v === 0 ? 0 : Math.max((v / max) * 100, 4);
+        document.querySelector(`[data-bar="${key}"]`).style.height = `${barHeight}%`;
+        const labelEl = document.querySelector(`[data-label="${key}"]`);
+        const custom = (state.labels && state.labels[key]) || '';
+        labelEl.textContent = custom ? `${key} — ${custom}` : `Вариант ${key}`;
+      });
+    }
+
+    async function poll() {
+      try {
+        const res = await fetch('/api/state', { cache: 'no-store' });
+        const state = await res.json();
+        render(state);
+      } catch (e) {
+        // keep last rendered state on transient network errors
+      }
+    }
+
+    poll();
+    setInterval(poll, 1500);
+  </script>
+</body>
+</html>

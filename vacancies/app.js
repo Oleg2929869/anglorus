@@ -26,7 +26,7 @@ function timeAgo(iso) {
 }
 
 async function loadSources() {
-  sources = await (await fetch('/api/sources')).json();
+  sources = await (await fetch('api/sources.php')).json();
   const box = $('sources');
   for (const s of sources) {
     const input = el('input', { type: 'checkbox', value: s.id, checked: s.available, disabled: !s.available });
@@ -65,7 +65,7 @@ form.addEventListener('submit', async (e) => {
 
   const params = new URLSearchParams({ q: $('q').value, sources: ids.join(','), remote: checked('remote'), days: checked('days') });
   try {
-    const res = await fetch(`/api/search?${params}`);
+    const res = await fetch(`api/search.php?${params}`);
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || res.status);
     $('status').textContent = data.total ? `Найдено вакансий: ${data.total}` : 'Ничего не найдено — попробуйте другие слова или более длинный период.';

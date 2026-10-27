@@ -1,0 +1,3 @@
+<FilesMatch "^(lib|registry|core)\.php$">
+    Require all denied
+</FilesMatch>

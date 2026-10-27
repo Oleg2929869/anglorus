@@ -1,0 +1,3 @@
+<FilesMatch "^(config\.php|README\.md)$">
+    Require all denied
+</FilesMatch>

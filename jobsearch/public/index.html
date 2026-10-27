@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Поиск вакансий</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main>
+    <h1>Поиск вакансий</h1>
+    <form id="form">
+      <div class="row">
+        <input id="q" type="search" placeholder="Ключевые слова: например, python backend" required autofocus>
+        <button type="submit">Найти</button>
+      </div>
+
+      <div class="filters">
+        <fieldset>
+          <legend>Опубликовано</legend>
+          <label><input type="radio" name="days" value="7" checked> За неделю</label>
+          <label><input type="radio" name="days" value="30"> За месяц</label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Формат работы</legend>
+          <label><input type="radio" name="remote" value="0" checked> Любой</label>
+          <label><input type="radio" name="remote" value="1"> Только удалённая</label>
+        </fieldset>
+
+        <fieldset class="sources">
+          <legend>Агрегаторы <button type="button" id="all" class="link">все</button> · <button type="button" id="none" class="link">сбросить</button></legend>
+          <div id="sources"></div>
+        </fieldset>
+      </div>
+    </form>
+
+    <p id="status" role="status"></p>
+    <div id="report"></div>
+    <ul id="results"></ul>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

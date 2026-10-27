@@ -1,0 +1,36 @@
+:root { --bg:#f6f7f9; --card:#fff; --text:#1c2330; --muted:#667085; --line:#e3e6eb; --accent:#2563eb; --ok:#16794a; --bad:#b42318; --remote:#0e7490; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#0f141b; --card:#171e28; --text:#e6e9ee; --muted:#98a2b3; --line:#2a3340; --accent:#6b9bff; --ok:#4cc38a; --bad:#ff8a80; --remote:#5fd0e6; }
+}
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--text); font:16px/1.45 system-ui, sans-serif; }
+main { max-width:860px; margin:0 auto; padding:24px 16px 64px; }
+h1 { margin:0 0 16px; font-size:1.6rem; }
+.row { display:flex; gap:8px; }
+input[type=search] { flex:1; min-width:0; padding:12px 14px; font:inherit; color:inherit; background:var(--card); border:1px solid var(--line); border-radius:8px; }
+button[type=submit] { padding:0 22px; font:inherit; font-weight:600; color:#fff; background:var(--accent); border:0; border-radius:8px; cursor:pointer; }
+button[type=submit]:disabled { opacity:.6; cursor:wait; }
+.filters { display:flex; flex-wrap:wrap; gap:12px; margin-top:12px; }
+fieldset { margin:0; padding:8px 12px 10px; background:var(--card); border:1px solid var(--line); border-radius:8px; }
+fieldset.sources { flex:1 1 100%; }
+legend { padding:0 4px; color:var(--muted); font-size:.85rem; }
+fieldset label { display:inline-block; margin-right:14px; }
+#sources { display:flex; flex-wrap:wrap; gap:4px 16px; }
+#sources label { margin:0; font-size:.92rem; }
+#sources label.off { color:var(--muted); }
+.link { padding:0; font:inherit; color:var(--accent); background:none; border:0; cursor:pointer; }
+#status { min-height:1.4em; margin:16px 0 4px; color:var(--muted); }
+#report { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px; font-size:.8rem; }
+.chip { padding:2px 8px; border:1px solid var(--line); border-radius:99px; color:var(--muted); }
+.chip.ok { color:var(--ok); } .chip.bad { color:var(--bad); }
+#results { margin:0; padding:0; list-style:none; display:grid; gap:10px; }
+.job { padding:14px 16px; background:var(--card); border:1px solid var(--line); border-radius:10px; }
+.job h2 { margin:0 0 2px; font-size:1.05rem; }
+.job h2 a { color:var(--accent); text-decoration:none; }
+.job h2 a:hover { text-decoration:underline; }
+.meta { color:var(--muted); font-size:.88rem; }
+.job p { margin:6px 0 0; font-size:.92rem; }
+.tags { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; font-size:.78rem; }
+.tag { padding:1px 8px; border-radius:99px; background:var(--bg); border:1px solid var(--line); }
+.tag.remote { color:var(--remote); border-color:var(--remote); }
+.tag.salary { color:var(--ok); }

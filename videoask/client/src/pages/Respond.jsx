@@ -142,9 +142,19 @@ export default function Respond() {
           {firstVideo ? (
             <video
               src={`/${firstVideo}`}
-              muted loop autoPlay playsInline
-              style={{ objectPosition: 'center center' }}
-              onLoadedData={(e) => { try { e.currentTarget.currentTime = 0.1; } catch {} }}
+              loop playsInline
+              style={{ objectFit: 'cover', objectPosition: 'center center' }}
+              ref={(el) => {
+                if (!el) return;
+                el.muted = true;
+                el.play().catch(() => {});
+              }}
+              onLoadedData={(e) => {
+                const v = e.currentTarget;
+                v.muted = true;
+                try { v.currentTime = 0.1; } catch {}
+                v.play().catch(() => {});
+              }}
             />
           ) : (
             <span className="fab-fallback"><TextIcon size={32} /></span>

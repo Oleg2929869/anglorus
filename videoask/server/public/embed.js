@@ -42,6 +42,8 @@
     vid.style.objectPosition = 'center center';
     vid.addEventListener('loadeddata', function () {
       try { vid.currentTime = 0.1; } catch (e) {}
+      vid.muted = true;
+      vid.play().catch(function () {});
     });
     fab.appendChild(vid);
   } else if (opts.avatar) {

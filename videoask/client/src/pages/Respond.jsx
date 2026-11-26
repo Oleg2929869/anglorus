@@ -160,7 +160,13 @@ export default function Respond() {
           <div className="phone-scrim" />
 
           <div className="phone-ui">
-            {form.questions.length === 0 && <p className="muted">В этой форме пока нет вопросов.</p>}
+            {!done && form.questions.length === 0 && (
+              <div className="empty-state">
+                <div className="empty-ico">🎬</div>
+                <p>В этой форме пока нет вопросов.</p>
+                <span>Создатель ещё записывает видео-шаги — заходите позже.</span>
+              </div>
+            )}
 
             {done && (
               <>
@@ -228,7 +234,7 @@ export default function Respond() {
               </>
             )}
 
-            {!done && !question && (
+            {!done && !question && form.questions.length > 0 && (
               form.collect_contact ? (
                 <form className="contact-form" onSubmit={handleFinish}>
                   <h1 className="phone-title">Почти готово</h1>
@@ -249,7 +255,7 @@ export default function Respond() {
                 <>
                   <h1 className="phone-title">Готово!</h1>
                   <button
-                    className="primary"
+                    className="primary wide"
                     disabled={submitting}
                     onClick={async () => {
                       setSubmitting(true);

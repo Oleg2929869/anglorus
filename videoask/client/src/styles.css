@@ -418,3 +418,45 @@ input:focus, textarea:focus, select:focus {
   background: #F4F6FA; border: 1px dashed #C6CCDD; color: #44506B;
   border-radius: 10px; padding: 8px 12px; margin: 8px 0; line-height: 1.6;
 }
+
+/* ---------- Экран контактов ---------- */
+.phone-ui--center { justify-content: center; text-align: center; }
+.contact-form { display: flex; flex-direction: column; gap: 6px; align-items: center; }
+.phone-ui--center .phone-title { font-size: 24px; }
+.contact-sub {
+  margin: 0 0 10px; font-size: 14px; color: rgba(255,255,255,.85); line-height: 1.45;
+}
+.contact-fields {
+  display: flex; flex-direction: column; gap: 10px; width: 100%;
+  max-width: 320px; margin: 0 auto;
+}
+.contact-field {
+  display: flex; align-items: center; gap: 0;
+  background: rgba(255,255,255,.16); border: 1px solid rgba(255,255,255,.35);
+  border-radius: 14px; overflow: hidden; transition: border-color .15s, box-shadow .15s;
+}
+.contact-field:focus-within {
+  border-color: var(--orange); box-shadow: 0 0 0 3px rgba(240,114,11,.35);
+}
+.contact-field span { padding: 0 4px 0 14px; font-size: 16px; }
+.contact-field input {
+  background: transparent; border: none; margin: 0; color: #fff; flex: 1;
+  box-shadow: none;
+}
+.contact-field input:focus { box-shadow: none; border: none; }
+.send-btn {
+  width: 100%; max-width: 320px; margin: 14px auto 0;
+  min-height: 52px; border-radius: 14px; font-size: 16px; font-weight: 700;
+  background: linear-gradient(160deg, #FF8F33 0%, var(--orange) 55%, var(--orange-dark) 100%);
+  border: none; color: #fff;
+  box-shadow: 0 6px 20px rgba(240, 114, 11, 0.45);
+}
+.send-btn:hover { background: linear-gradient(160deg, #FF8F33 0%, #E9690C 55%, #C1560A 100%); }
+
+/* Явный контраст кнопки следующего шага */
+.phone-ui .next {
+  background: linear-gradient(160deg, #FF8F33 0%, var(--orange) 55%, var(--orange-dark) 100%);
+  border: none; color: #fff; font-weight: 700;
+  box-shadow: 0 6px 20px rgba(240, 114, 11, 0.4);
+}
+.phone-ui .next:hover { background: linear-gradient(160deg, #FF8F33 0%, #E9690C 55%, #C1560A 100%); }

@@ -161,7 +161,7 @@ export default function Respond() {
           )}
           <div className="phone-scrim" />
 
-          <div className="phone-ui">
+          <div className={'phone-ui' + (!done && !question && form.questions.length > 0 ? ' phone-ui--center' : '')}>
             {!done && form.questions.length === 0 && (
               <div className="empty-state">
                 <div className="empty-ico">🎬</div>
@@ -266,9 +266,11 @@ export default function Respond() {
                       </div>
                     )}
                     {rec.error && <div className="error">{rec.error}</div>}
-                    <button className="next" onClick={handleNext} disabled={submitting}>
-                      {stepAfter(question, null) === 'finish' ? 'Завершить ✓' : 'Следующий шаг →'}
-                    </button>
+                    {!rec.recording && (
+                      <button className="next" onClick={handleNext} disabled={submitting}>
+                        {stepAfter(question, null) === 'finish' ? 'Завершить ✓' : 'Следующий шаг →'}
+                      </button>
+                    )}
                   </>
                 )}
               </>
@@ -277,19 +279,28 @@ export default function Respond() {
             {!done && !question && form.questions.length > 0 && (
               form.collect_contact ? (
                 <form className="contact-form" onSubmit={handleFinish}>
-                  <h1 className="phone-title">Почти готово</h1>
-                  <input
-                    value={contact.name}
-                    onChange={(e) => setContact({ ...contact, name: e.target.value })}
-                    placeholder="Ваше имя"
-                  />
-                  <input
-                    type="email"
-                    value={contact.email}
-                    onChange={(e) => setContact({ ...contact, email: e.target.value })}
-                    placeholder="Email"
-                  />
-                  <button className="primary" type="submit" disabled={submitting}>✅ Отправить ответы</button>
+                  <h1 className="phone-title">Почти готово!</h1>
+                  <p className="contact-sub">Оставьте контакты, чтобы получить ответ. Это необязательно.</p>
+                  <div className="contact-fields">
+                    <label className="contact-field">
+                      <span>👤</span>
+                      <input
+                        value={contact.name}
+                        onChange={(e) => setContact({ ...contact, name: e.target.value })}
+                        placeholder="Ваше имя"
+                      />
+                    </label>
+                    <label className="contact-field">
+                      <span>✉️</span>
+                      <input
+                        type="email"
+                        value={contact.email}
+                        onChange={(e) => setContact({ ...contact, email: e.target.value })}
+                        placeholder="Email"
+                      />
+                    </label>
+                  </div>
+                  <button className="send-btn" type="submit" disabled={submitting}>✅ Отправить ответы</button>
                 </form>
               ) : (
                 <>

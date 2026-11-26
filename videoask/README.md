@@ -9,7 +9,7 @@
 
 - **Клиент:** React 18 + Vite + react-router
 - **Сервер:** Node.js + Express
-- **База:** SQLite (better-sqlite3, файл `server/data/videoask.db`)
+- **База:** JSON-хранилище (файл `server/data/db.json`), без нативных зависимостей
 - **Медиа:** запись в браузере (webm), загрузка через multer, файлы в `server/uploads/`
 
 ## Запуск
@@ -57,9 +57,9 @@ npm start
 
 ```
 videoask/
-├── server/          # Express API + SQLite
+├── server/          # Express API + JSON-store
 │   ├── index.js     # все роуты
-│   └── db.js        # схема БД (forms, questions, responses, answers)
+│   └── store.js     # JSON-хранилище (forms, questions, responses, answers)
 └── client/          # React SPA
     └── src/pages/   # Dashboard, FormEditor, Respond, Inbox
 ```

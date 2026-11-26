@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { getForm, startResponse, submitAnswer, finishResponse } from '../api.js';
 import { useRecorder } from '../useRecorder.js';
 import LivePreview, { useElapsed } from '../LivePreview.jsx';
+import WebmVideo from '../WebmVideo.jsx';
 
 export default function Respond() {
   const { id } = useParams();
@@ -154,13 +155,7 @@ export default function Respond() {
           <button className="phone-close" onClick={collapse} aria-label="Свернуть">✕</button>
 
           {question && question.media_path ? (
-            <video
-              className="phone-video-fill"
-              src={`/${question.media_path}`}
-              controls
-              autoPlay
-              playsInline
-            />
+            <WebmVideo className="phone-video-fill" src={`/${question.media_path}`} autoPlay playsInline />
           ) : (
             <div className="phone-novideo"><span>🎥</span></div>
           )}
@@ -263,7 +258,7 @@ export default function Respond() {
                         {rec.file.type.startsWith('audio') ? (
                           <audio className="preview-media" src={rec.previewUrl} controls />
                         ) : (
-                          <video className="preview-media" src={rec.previewUrl} controls />
+                          <WebmVideo className="preview-media" src={rec.previewUrl} />
                         )}
                         <button type="button" className="rerecord" onClick={() => rec.start(rec.lastKind)}>
                           🔄 Перезаписать

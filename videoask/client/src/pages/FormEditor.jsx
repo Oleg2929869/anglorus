@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { getForm, addQuestion, deleteQuestion } from '../api.js';
 import { useRecorder } from '../useRecorder.js';
 import LivePreview, { useElapsed } from '../LivePreview.jsx';
+import WebmVideo from '../WebmVideo.jsx';
 
 const ALL_KINDS = ['video', 'audio', 'text'];
 const KIND_LABEL = { video: 'видео', audio: 'аудио', text: 'текст' };
@@ -97,7 +98,7 @@ export default function FormEditor() {
               <button className="danger small-btn" onClick={() => handleDeleteQuestion(q.id)}>✕</button>
             </div>
             {q.media_path && (
-              <video className="question-video" src={`/${q.media_path}`} controls preload="metadata" />
+              <WebmVideo className="question-video" src={`/${q.media_path}`} />
             )}
             <p>{q.prompt}</p>
             {q.type === 'choice' && (
@@ -218,7 +219,7 @@ export default function FormEditor() {
         {rec.error && <div className="error">{rec.error}</div>}
         {rec.previewUrl && !rec.recording && (
           <div className="review-wrap">
-            <video className="question-video" src={rec.previewUrl} controls />
+            <WebmVideo className="question-video" src={rec.previewUrl} />
             <button type="button" onClick={() => rec.start('video')}>🔄 Перезаписать</button>
           </div>
         )}

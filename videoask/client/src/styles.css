@@ -409,3 +409,6 @@ input:focus, textarea:focus, select:focus {
   display: inline-flex; align-items: center; justify-content: center;
   min-height: 40px; padding: 0 16px; font-size: 14px;
 }
+
+.review-info { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+.review-info span { font-size: 13px; color: var(--ink-soft); font-weight: 600; }

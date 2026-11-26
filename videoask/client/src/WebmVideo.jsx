@@ -10,14 +10,19 @@ export default function WebmVideo({ src, className, autoPlay, playsInline }) {
     const v = ref.current;
     if (!v) return;
     const fix = () => {
+      const seekToFrame = () => {
+        v.currentTime = Math.min(0.1, (v.duration || 1) / 10);
+        if (autoPlay) v.play().catch(() => {});
+      };
       if (v.duration === Infinity || isNaN(v.duration)) {
         const onSeek = () => {
           v.removeEventListener('timeupdate', onSeek);
-          v.currentTime = 0;
-          if (autoPlay) v.play().catch(() => {});
+          seekToFrame();
         };
         v.addEventListener('timeupdate', onSeek);
         v.currentTime = 1e101;
+      } else if (!autoPlay && v.currentTime === 0) {
+        seekToFrame();
       }
     };
     if (v.readyState >= 1) fix();

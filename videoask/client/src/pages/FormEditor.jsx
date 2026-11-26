@@ -220,7 +220,10 @@ export default function FormEditor() {
         {rec.previewUrl && !rec.recording && (
           <div className="review-wrap">
             <WebmVideo className="question-video" src={rec.previewUrl} />
-            <button type="button" onClick={() => rec.start('video')}>🔄 Перезаписать</button>
+            <div className="review-info">
+              <span>Записано: {(rec.file.size / 1024 / 1024).toFixed(1)} МБ</span>
+              <button type="button" onClick={() => rec.start('video')}>🔄 Перезаписать</button>
+            </div>
           </div>
         )}
         <button className="primary wide" type="submit" disabled={saving || rec.recording}>

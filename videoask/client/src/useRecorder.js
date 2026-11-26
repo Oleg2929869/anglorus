@@ -13,6 +13,8 @@ export function useRecorder() {
   const streamRef = useRef(null);
   const fileRef = useRef(null);
   const kindRef = useRef('video');
+  const onstopFiredRef = useRef(false);
+  const [diag, setDiag] = useState(null);
 
   const cleanup = useCallback(() => {
     if (streamRef.current) {
@@ -67,6 +69,7 @@ export function useRecorder() {
       };
       recorder.ondataavailable = (e) => e.data.size && chunksRef.current.push(e.data);
       recorder.onstop = () => {
+        onstopFiredRef.current = true;
         buildResult();
         cleanup();
       };
@@ -95,6 +98,7 @@ export function useRecorder() {
     }
     setRecording(false);
     setTimeout(() => {
+      const bytes = chunksRef.current.reduce((n, c) => n + c.size, 0);
       if (!fileRef.current && chunksRef.current.length) {
         const type = recorder && recorder.mimeType
           ? recorder.mimeType
@@ -105,8 +109,19 @@ export function useRecorder() {
         fileRef.current = file;
         setFile(file);
       }
+      setDiag({
+        chunks: chunksRef.current.length,
+        bytes,
+        onstop: onstopFiredRef.current,
+        fileBuilt: !!fileRef.current,
+        state: recorder ? recorder.state : 'none',
+        mime: recorder && recorder.mimeType ? recorder.mimeType : 'default',
+      });
+      if (!fileRef.current) {
+        setError('Запись не собралась в файл. Данные: ' + chunksRef.current.length + ' фрагм., ' + bytes + ' байт. Попробуйте записать дольше 2 секунд.');
+      }
       cleanup();
-    }, 400);
+    }, 600);
   }, [cleanup]);
 
   const setUploadedFile = useCallback((f, url) => {
@@ -117,11 +132,13 @@ export function useRecorder() {
 
   const reset = useCallback(() => {
     fileRef.current = null;
+    onstopFiredRef.current = false;
+    setDiag(null);
     chunksRef.current = [];
     setPreviewUrl(null);
     setFile(null);
     setError(null);
   }, []);
 
-  return { recording, liveStream, lastKind, startedAt, previewUrl, file, error, start, stop, setUploadedFile, reset };
+  return { recording, liveStream, lastKind, startedAt, previewUrl, file, error, diag, start, stop, setUploadedFile, reset };
 }

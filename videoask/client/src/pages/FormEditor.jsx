@@ -217,6 +217,13 @@ export default function FormEditor() {
         </div>
         {rec.recording && <LivePreview stream={rec.liveStream} kind="video" elapsed={elapsed} />}
         {rec.error && <div className="error">{rec.error}</div>}
+        {rec.diag && (
+          <div className="diag">
+            Диагностика: фрагментов {rec.diag.chunks}, {rec.diag.bytes} байт,
+            onstop: {String(rec.diag.onstop)}, файл: {String(rec.diag.fileBuilt)},
+            состояние: {rec.diag.state}, mime: {rec.diag.mime}
+          </div>
+        )}
         {rec.previewUrl && (
           <div className="review-wrap">
             <WebmVideo className="question-video" src={rec.previewUrl} />

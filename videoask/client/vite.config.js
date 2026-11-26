@@ -8,6 +8,8 @@ export default defineConfig({
     proxy: {
       '/api': 'http://localhost:4000',
       '/media': 'http://localhost:4000',
+      '/embed': 'http://localhost:4000',
+      '/landing': 'http://localhost:4000',
     },
   },
 });

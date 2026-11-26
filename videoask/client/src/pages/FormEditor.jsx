@@ -5,6 +5,7 @@ import { useRecorder } from '../useRecorder.js';
 
 const ALL_KINDS = ['video', 'audio', 'text'];
 const KIND_LABEL = { video: 'видео', audio: 'аудио', text: 'текст' };
+const KIND_EMOJI = { video: '🎬', audio: '🎤', text: '⌨️' };
 
 const NEXT_LABEL = (q, i) => `→ «${q.prompt.slice(0, 30)}${q.prompt.length > 30 ? '…' : ''}»`;
 
@@ -119,39 +120,48 @@ export default function FormEditor() {
 
       <form className="card add-question" onSubmit={handleAdd}>
         <h2>Новый шаг</h2>
-        <div className="type-switch">
-          <label>
-            <input type="radio" checked={type === 'open'} onChange={() => setType('open')} />
-            🎤 Открытый вопрос (ответ видео/аудио/текст)
-          </label>
-          <label>
-            <input type="radio" checked={type === 'choice'} onChange={() => setType('choice')} />
-            🔘 Вопрос с кнопками (сценарий: выбор → следующий шаг)
-          </label>
+        <div className="seg">
+          <button type="button" className={'seg-btn' + (type === 'open' ? ' active' : '')} onClick={() => setType('open')}>
+            <span className="seg-ico">🎤</span>
+            <span>Открытый вопрос<small>ответ видео / аудио / текстом</small></span>
+          </button>
+          <button type="button" className={'seg-btn' + (type === 'choice' ? ' active' : '')} onClick={() => setType('choice')}>
+            <span className="seg-ico">🔘</span>
+            <span>Сценарий с кнопками<small>выбор ведёт к разным шагам</small></span>
+          </button>
         </div>
+        <label className="field-label">Текст вопроса</label>
         <textarea
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
-          placeholder="Текст вопроса / пояснение к видео…"
+          placeholder="Что спросить у респондента…"
           rows={2}
         />
 
         {type === 'open' && (
-          <div className="kinds">
-            {ALL_KINDS.map((k) => (
-              <label key={k}>
-                <input type="checkbox" checked={allowed.includes(k)} onChange={() => toggleKind(k)} />
-                {KIND_LABEL[k]}
-              </label>
-            ))}
-          </div>
+          <>
+            <label className="field-label">Допустимые типы ответов</label>
+            <div className="kinds">
+              {ALL_KINDS.map((k) => (
+                <button
+                  key={k}
+                  type="button"
+                  className={'chip' + (allowed.includes(k) ? ' chip-on' : '')}
+                  onClick={() => toggleKind(k)}
+                >
+                  {KIND_EMOJI[k]} {KIND_LABEL[k]}
+                </button>
+              ))}
+            </div>
+          </>
         )}
 
         {type === 'choice' && (
           <div className="options-editor">
-            <strong>Варианты ответов (кнопки) и переходы:</strong>
+            <label className="field-label">Кнопки-варианты и переходы</label>
             {options.map((o, i) => (
               <div key={i} className="option-row">
+                <span className="option-num">{i + 1}</span>
                 <input
                   value={o.label}
                   onChange={(e) => setOption(i, { label: e.target.value })}
@@ -159,7 +169,7 @@ export default function FormEditor() {
                 />
                 <select value={o.next ?? ''} onChange={(e) => setOption(i, { next: e.target.value || null })}>
                   <option value="">→ далее по порядку</option>
-                  <option value="end">→ завершить форму</option>
+                  <option value="end">→ завершить</option>
                   <optgroup label="Перейти к шагу:">
                     {form.questions.map((q, qi) => (
                       <option key={q.id} value={q.id}>
@@ -169,28 +179,33 @@ export default function FormEditor() {
                   </optgroup>
                 </select>
                 {options.length > 1 && (
-                  <button type="button" className="small-btn"
+                  <button type="button" className="danger small-btn option-del"
                     onClick={() => setOptions((prev) => prev.filter((_, idx) => idx !== i))}>✕</button>
                 )}
               </div>
             ))}
-            <button type="button" onClick={() => setOptions((prev) => [...prev, { label: '', next: null }])}>
-              + вариант
+            <button type="button" className="add-opt" onClick={() => setOptions((prev) => [...prev, { label: '', next: null }])}>
+              + добавить вариант
             </button>
             <p className="muted small">
-              Переходы можно указывать только на уже созданные шаги. Сначала добавьте все шаги, затем
-              настройте переходы, пересоздав кнопки при необходимости.
+              Переход возможен только на уже созданные шаги. Сначала добавьте все шаги сценария, затем
+              настройте кнопки-переходы.
             </p>
           </div>
         )}
 
+        <label className="field-label">Видео-сообщение к шагу</label>
         <div className="recorder-row">
-          <button type="button" onClick={() => rec.start('video')} disabled={rec.recording || saving}>
-            🔴 Записать видео-сообщение
-          </button>
-          <button type="button" onClick={() => rec.stop()} disabled={!rec.recording}>⏹ Стоп</button>
-          <label className="upload-label">
-            или файл: <input type="file" accept="video/*,audio/*" onChange={(e) => {
+          {!rec.recording ? (
+            <button type="button" className="primary" onClick={() => rec.start('video')} disabled={saving}>
+              🔴 Записать с камеры
+            </button>
+          ) : (
+            <button type="button" className="danger" onClick={rec.stop}>⏹ Остановить запись</button>
+          )}
+          <label className="file-label">
+            📁 Загрузить файл
+            <input type="file" accept="video/*,audio/*" onChange={(e) => {
               const f = e.target.files[0];
               if (f) rec.setUploadedFile(f, URL.createObjectURL(f));
             }} />
@@ -198,7 +213,7 @@ export default function FormEditor() {
         </div>
         {rec.error && <div className="error">{rec.error}</div>}
         {rec.previewUrl && <video className="question-video" src={rec.previewUrl} controls />}
-        <button type="submit" disabled={saving}>
+        <button className="primary wide" type="submit" disabled={saving}>
           {saving ? 'Сохранение…' : 'Добавить шаг'}
         </button>
       </form>

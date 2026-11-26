@@ -70,3 +70,28 @@ videoask/
 └── client/          # React SPA
     └── src/pages/   # Dashboard, FormEditor, Respond, Inbox
 ```
+
+## Embed-виджет на любой сайт
+
+Чтобы форма обратной связи в виде аватара плавала поверх вашего сайта (как у
+VideoAsk), добавьте перед `</body>`:
+
+```html
+<script src="http://localhost:4000/embed/embed.js"></script>
+<script>
+  window.VIDEOASK_EMBED_CONFIG = {
+    url: "http://localhost:4000/f/<form_id>",
+    options: {
+      position: "bottom-right",      // bottom-right | bottom-left | top-right | top-left
+      emoji: "💬",                    // или avatar: "https://.../photo.jpg"
+      backgroundColor: "#1E5B3E",
+      text: "Открыть видео-форму"
+    }
+  };
+</script>
+```
+
+Виджет рисует круглый аватар с пульсирующим оранжевым кольцом; по клику
+открывается вертикальная карточка 9:16 с вашей формой. Крестик или клик по фону
+сворачивают форму обратно в аватар (страница общается с виджетом через
+`postMessage`).

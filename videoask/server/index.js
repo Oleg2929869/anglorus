@@ -17,6 +17,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage, limits: { fileSize: 100 * 1024 * 1024 } });
 
 app.use('/media', express.static(store.UPLOADS_DIR));
+app.use('/embed', express.static(path.join(__dirname, 'public')));
 
 function rowToForm(f) {
   return { ...f, collect_contact: !!f.collect_contact };
@@ -171,7 +172,7 @@ app.get('/api/forms/:id/responses', (req, res) => {
 const clientDist = path.join(__dirname, '..', 'client', 'dist');
 if (fs.existsSync(clientDist)) {
   app.use(express.static(clientDist));
-  app.get(/^\/(?!api|media).*/, (req, res) => res.sendFile(path.join(clientDist, 'index.html')));
+  app.get(/^\/(?!api|media|embed).*/, (req, res) => res.sendFile(path.join(clientDist, 'index.html')));
 }
 
 const PORT = process.env.PORT || 4000;

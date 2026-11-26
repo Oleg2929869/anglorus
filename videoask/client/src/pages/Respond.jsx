@@ -6,7 +6,7 @@ import { useRecorder } from '../useRecorder.js';
 export default function Respond() {
   const { id } = useParams();
   const [form, setForm] = useState(null);
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(() => window.self !== window.top);
   const [step, setStep] = useState(0);
   const [text, setText] = useState('');
   const [done, setDone] = useState(false);
@@ -38,6 +38,16 @@ export default function Respond() {
   function markDone() {
     setDone(true);
     doneRef.current = true;
+    if (window.self !== window.top) {
+      window.parent.postMessage({ type: 'va:done' }, '*');
+    }
+  }
+
+  function collapse() {
+    setExpanded(false);
+    if (window.self !== window.top) {
+      window.parent.postMessage({ type: 'va:collapse' }, '*');
+    }
   }
 
   function stepAfter(q, chosenOptionNext) {
@@ -136,9 +146,9 @@ export default function Respond() {
 
   return (
     <div className="widget-stage">
-      <div className="widget-overlay" onClick={(e) => e.target === e.currentTarget && setExpanded(false)}>
+      <div className="widget-overlay" onClick={(e) => e.target === e.currentTarget && collapse()}>
         <div className="phone-card">
-          <button className="phone-close" onClick={() => setExpanded(false)} aria-label="Свернуть">✕</button>
+          <button className="phone-close" onClick={collapse} aria-label="Свернуть">✕</button>
 
           <video
             className="phone-video"

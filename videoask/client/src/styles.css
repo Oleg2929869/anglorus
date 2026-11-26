@@ -354,3 +354,33 @@ input:focus, textarea:focus, select:focus {
   margin: 4px 0 0; font-size: 13px; color: rgba(255,255,255,.8);
   text-align: center;
 }
+
+/* ---------- Композер ответа ---------- */
+.composer { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.composer-rec { display: flex; align-items: flex-end; gap: 14px; }
+.rec-orb {
+  width: 74px; height: 74px; border-radius: 50%;
+  background: rgba(255,255,255,.16); border: 1.5px solid rgba(255,255,255,.75);
+  color: #fff; font-size: 26px; padding: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  transition: transform .12s, background .15s, border-color .15s;
+}
+.rec-orb:hover { transform: scale(1.06); background: rgba(255,255,255,.24); }
+.rec-orb small { font-size: 11px; font-weight: 700; letter-spacing: .03em; opacity: .9; }
+.rec-orb-sm { width: 58px; height: 58px; font-size: 21px; }
+.text-toggle {
+  background: transparent; border: none; color: rgba(255,255,255,.85);
+  font-size: 13px; font-weight: 600; padding: 6px 10px; text-decoration: underline dotted;
+}
+.text-toggle:hover { color: #fff; background: transparent; }
+.stop-btn {
+  background: rgba(176,42,42,.9); border-color: transparent; color: #fff;
+  font-weight: 600; width: 100%; padding: 12px;
+}
+.answer-ready { display: flex; flex-direction: column; gap: 8px; }
+.rerecord {
+  background: transparent; border: none; color: rgba(255,255,255,.85);
+  font-size: 13px; font-weight: 600; padding: 4px 8px; text-decoration: underline dotted;
+}
+.rerecord:hover { color: #fff; background: transparent; }

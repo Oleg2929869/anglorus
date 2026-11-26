@@ -10,6 +10,7 @@ export default function Respond() {
   const [expanded, setExpanded] = useState(() => window.self !== window.top);
   const [step, setStep] = useState(0);
   const [text, setText] = useState('');
+  const [showText, setShowText] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
@@ -203,35 +204,62 @@ export default function Respond() {
                   </div>
                 ) : (
                   <>
-                    <div className="rec-btns">
-                      {question.allowed_answers.includes('video') && (
-                        <button className="primary" onClick={() => rec.start('video')} disabled={rec.recording}>
-                          🎬 Видео
-                        </button>
-                      )}
-                      {question.allowed_answers.includes('audio') && (
-                        <button className="primary" onClick={() => rec.start('audio')} disabled={rec.recording}>
-                          🎤 Аудио
-                        </button>
-                      )}
-                      {rec.recording && (
-                        <button className="danger" onClick={rec.stop}>⏹ Стоп</button>
-                      )}
-                    </div>
-                    {question.allowed_answers.includes('text') && (
-                      <textarea
-                        value={text}
-                        onChange={(e) => setText(e.target.value)}
-                        placeholder="…или напишите текстом"
-                        rows={3}
-                      />
+                    {!rec.recording && (
+                      <div className="composer">
+                        <div className="composer-rec">
+                          {question.allowed_answers.includes('video') && (
+                            <button
+                              type="button"
+                              className="rec-orb"
+                              onClick={() => { setShowText(false); rec.start('video'); }}
+                              aria-label="Записать видео-ответ"
+                            >
+                              🎬<small>Видео</small>
+                            </button>
+                          )}
+                          {question.allowed_answers.includes('audio') && (
+                            <button
+                              type="button"
+                              className="rec-orb rec-orb-sm"
+                              onClick={() => { setShowText(false); rec.start('audio'); }}
+                              aria-label="Записать аудио-ответ"
+                            >
+                              🎤<small>Аудио</small>
+                            </button>
+                          )}
+                        </div>
+                        {question.allowed_answers.includes('text') && (
+                          <button type="button" className="text-toggle" onClick={() => setShowText((v) => !v)}>
+                            {showText ? '↑ Свернуть' : '⌨️ Написать текстом'}
+                          </button>
+                        )}
+                        {showText && (
+                          <textarea
+                            value={text}
+                            onChange={(e) => setText(e.target.value)}
+                            placeholder="Ваш ответ…"
+                            rows={3}
+                          />
+                        )}
+                      </div>
                     )}
-                    {rec.recording && <LivePreview stream={rec.liveStream} kind={rec.lastKind} elapsed={elapsed} />}
-                    {rec.previewUrl && !rec.recording && rec.file && rec.file.type.startsWith('audio') && (
-                      <audio className="preview-media" src={rec.previewUrl} controls />
+                    {rec.recording && (
+                      <>
+                        <LivePreview stream={rec.liveStream} kind={rec.lastKind} elapsed={elapsed} />
+                        <button className="stop-btn" onClick={rec.stop}>⏹ Остановить запись</button>
+                      </>
                     )}
-                    {rec.previewUrl && !rec.recording && rec.file && !rec.file.type.startsWith('audio') && (
-                      <video className="preview-media" src={rec.previewUrl} controls />
+                    {rec.previewUrl && !rec.recording && rec.file && (
+                      <div className="answer-ready">
+                        {rec.file.type.startsWith('audio') ? (
+                          <audio className="preview-media" src={rec.previewUrl} controls />
+                        ) : (
+                          <video className="preview-media" src={rec.previewUrl} controls />
+                        )}
+                        <button type="button" className="rerecord" onClick={() => rec.start(rec.lastKind)}>
+                          🔄 Перезаписать
+                        </button>
+                      </div>
                     )}
                     {rec.error && <div className="error">{rec.error}</div>}
                     <button className="next" onClick={handleNext} disabled={submitting}>

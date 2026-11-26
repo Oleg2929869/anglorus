@@ -153,13 +153,17 @@ export default function Respond() {
         <div className="phone-card">
           <button className="phone-close" onClick={collapse} aria-label="Свернуть">✕</button>
 
-          <video
-            className="phone-video-fill"
-            src={question && question.media_path ? `/${question.media_path}` : firstVideo ? `/${firstVideo}` : undefined}
-            controls
-            autoPlay
-            playsInline
-          />
+          {question && question.media_path ? (
+            <video
+              className="phone-video-fill"
+              src={`/${question.media_path}`}
+              controls
+              autoPlay
+              playsInline
+            />
+          ) : (
+            <div className="phone-novideo"><span>🎥</span></div>
+          )}
           <div className="phone-scrim" />
 
           <div className="phone-ui">

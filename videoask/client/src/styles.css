@@ -360,15 +360,27 @@ input:focus, textarea:focus, select:focus {
 .composer-rec { display: flex; align-items: flex-end; gap: 14px; }
 .rec-orb {
   width: 74px; height: 74px; border-radius: 50%;
-  background: rgba(255,255,255,.16); border: 1.5px solid rgba(255,255,255,.75);
+  background: linear-gradient(160deg, #FF8F33 0%, var(--orange) 55%, var(--orange-dark) 100%);
+  border: 2px solid rgba(255,255,255,.85);
   color: #fff; font-size: 26px; padding: 0;
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
-  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
-  transition: transform .12s, background .15s, border-color .15s;
+  box-shadow: 0 6px 20px rgba(240, 114, 11, 0.45);
+  transition: transform .12s, box-shadow .15s;
 }
-.rec-orb:hover { transform: scale(1.06); background: rgba(255,255,255,.24); }
-.rec-orb small { font-size: 11px; font-weight: 700; letter-spacing: .03em; opacity: .9; }
-.rec-orb-sm { width: 58px; height: 58px; font-size: 21px; }
+.rec-orb:hover { transform: scale(1.06); box-shadow: 0 8px 26px rgba(240, 114, 11, 0.6); }
+.rec-orb small { font-size: 11px; font-weight: 700; letter-spacing: .03em; opacity: .95; }
+.rec-orb-sm {
+  width: 58px; height: 58px; font-size: 21px;
+  background: transparent; border: 1.5px solid var(--orange);
+  box-shadow: none; color: #fff;
+}
+.rec-orb-sm:hover { background: rgba(240, 114, 11, 0.25); box-shadow: none; }
+.phone-novideo {
+  position: absolute; inset: 0;
+  background: linear-gradient(165deg, #17513A 0%, #0E3A28 70%, #092B1E 100%);
+  display: flex; align-items: center; justify-content: center;
+}
+.phone-novideo span { font-size: 52px; opacity: .85; }
 .text-toggle {
   background: transparent; border: none; color: rgba(255,255,255,.85);
   font-size: 13px; font-weight: 600; padding: 6px 10px; text-decoration: underline dotted;
@@ -384,3 +396,8 @@ input:focus, textarea:focus, select:focus {
   font-size: 13px; font-weight: 600; padding: 4px 8px; text-decoration: underline dotted;
 }
 .rerecord:hover { color: #fff; background: transparent; }
+
+.novideo-badge {
+  background: #FDE7E7; color: #B02A2A; font-size: 11px; font-weight: 700;
+  border-radius: 999px; padding: 2px 10px;
+}

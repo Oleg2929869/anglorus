@@ -88,6 +88,7 @@ export default function FormEditor() {
           <li key={q.id} className="card question">
             <div className="question-head">
               <strong>Шаг {i + 1} {q.type === 'choice' ? '🔘 с кнопками' : '🎤 открытый'}</strong>
+              {!q.media_path && <span className="novideo-badge">нет видео</span>}
               <span className="muted small">
                 {q.type === 'choice'
                   ? `вариантов: ${q.options.length}`
@@ -221,8 +222,8 @@ export default function FormEditor() {
             <button type="button" onClick={() => rec.start('video')}>🔄 Перезаписать</button>
           </div>
         )}
-        <button className="primary wide" type="submit" disabled={saving}>
-          {saving ? 'Сохранение…' : 'Добавить шаг'}
+        <button className="primary wide" type="submit" disabled={saving || rec.recording}>
+          {rec.recording ? '⏹ Сначала остановите запись' : saving ? 'Сохранение…' : 'Добавить шаг'}
         </button>
       </form>
     </div>

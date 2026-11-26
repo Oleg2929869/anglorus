@@ -33,18 +33,21 @@ export default function Dashboard() {
 
   return (
     <div className="page">
-      <header className="topbar">
-        <h1>📹 VideoAsk Clone</h1>
-        <span className="muted">асинхронные видео-формы</span>
+      <header className="brand">
+        <div className="brand-mark">▶</div>
+        <div>
+          <h1>VideoAsk Clone</h1>
+          <p>асинхронные видео-формы для вашего сайта</p>
+        </div>
       </header>
 
-      <form className="card create-form" onSubmit={handleCreate}>
+      <form className="create-hero card" onSubmit={handleCreate}>
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="Название новой видео-формы…"
+          placeholder="Как назовём вашу видео-форму?"
         />
-        <button type="submit">Создать</button>
+        <button className="primary" type="submit">＋ Создать форму</button>
       </form>
 
       {error && <div className="error">{error}</div>}
@@ -52,7 +55,11 @@ export default function Dashboard() {
       {forms === null ? (
         <p>Загрузка…</p>
       ) : forms.length === 0 ? (
-        <p className="muted">Пока нет форм. Создайте первую выше ☝️</p>
+        <div className="empty-box">
+          <div className="empty-ico">🎬</div>
+          <h3>Пока нет ни одной формы</h3>
+          <p>Придумайте название выше, создайте форму —<br />и запишите первое видео-приветствие.</p>
+        </div>
       ) : (
         <ul className="form-list">
           {forms.map((f) => (

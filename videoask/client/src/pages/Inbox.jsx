@@ -42,9 +42,12 @@ export default function Inbox() {
           return (
             <li key={r.id} className="card response">
               <button className="response-head" onClick={() => setOpenId(open ? null : r.id)}>
+                <span className="avatar-initials">
+                  {(r.contact_name || 'А').trim().charAt(0).toUpperCase()}
+                </span>
                 <strong>{r.contact_name || 'Аноним'}</strong>
-                <span className={st.cls}>{st.label}</span>
                 <span className="muted small">{r.created_at}</span>
+                <span className={'pill ' + st.cls}>{st.label}</span>
               </button>
               {open && (
                 <div className="answers">

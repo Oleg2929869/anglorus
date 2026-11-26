@@ -369,11 +369,10 @@ input:focus, textarea:focus, select:focus {
 }
 .rec-orb:hover { transform: scale(1.06); box-shadow: 0 8px 26px rgba(240, 114, 11, 0.6); }
 .rec-orb small { font-size: 11px; font-weight: 700; letter-spacing: .03em; opacity: .95; }
-.rec-orb-sm {
-  background: transparent; border: 2px solid rgba(255,255,255,.85);
-  box-shadow: none; color: #fff;
+.rec-orb-active {
+  background: linear-gradient(160deg, #D6610A 0%, #C1560A 100%);
+  box-shadow: 0 0 0 3px rgba(255,255,255,.35), 0 6px 20px rgba(240, 114, 11, .45);
 }
-.rec-orb-sm:hover { background: rgba(255,255,255,.18); box-shadow: none; }
 .phone-novideo {
   position: absolute; inset: 0;
   background: linear-gradient(165deg, #17513A 0%, #0E3A28 70%, #092B1E 100%);

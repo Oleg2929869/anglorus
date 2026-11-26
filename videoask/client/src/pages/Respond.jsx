@@ -224,19 +224,24 @@ export default function Respond() {
                           {question.allowed_answers.includes('audio') && (
                             <button
                               type="button"
-                              className="rec-orb rec-orb-sm"
+                              className="rec-orb"
                               onClick={() => { setShowText(false); rec.start('audio'); }}
                               aria-label="Записать аудио-ответ"
                             >
                               🎤<small>Аудио</small>
                             </button>
                           )}
+                          {question.allowed_answers.includes('text') && (
+                            <button
+                              type="button"
+                              className={'rec-orb' + (showText ? ' rec-orb-active' : '')}
+                              onClick={() => setShowText((v) => !v)}
+                              aria-label="Написать текстом"
+                            >
+                              ⌨️<small>{showText ? 'Скрыть' : 'Текст'}</small>
+                            </button>
+                          )}
                         </div>
-                        {question.allowed_answers.includes('text') && (
-                          <button type="button" className="text-toggle" onClick={() => setShowText((v) => !v)}>
-                            {showText ? '↑ Свернуть' : '⌨️ Написать текстом'}
-                          </button>
-                        )}
                         {showText && (
                           <textarea
                             value={text}

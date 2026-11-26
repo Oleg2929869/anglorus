@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VideoAsk Clone — асинхронные видео-формы для вашего сайта</title>
+<meta name="description" content="Записывайте видео-вопросы, получайте видео-, аудио- и текстовые ответы. Сценарии с ветвлением, виджет-аватар, ответы в одном inbox.">
+<style>
+:root {
+  --bg: #FAF9F5; --surface: #fff; --ink: #1D2A24; --soft: #5C6B63;
+  --orange: #F0720B; --orange-d: #D6610A; --green: #1E5B3E; --green-soft: #E8F1EB;
+  --line: #E7E4DB;
+}
+* { box-sizing: border-box; margin: 0; }
+body { background: var(--bg); color: var(--ink); font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; -webkit-font-smoothing: antialiased; line-height: 1.6; }
+a { color: inherit; text-decoration: none; }
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+nav { display: flex; align-items: center; gap: 14px; padding: 22px 0; position: sticky; top: 0; background: rgba(250,249,245,.92); backdrop-filter: blur(8px); z-index: 10; }
+.logo { width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(160deg,#FF8F33,var(--orange) 55%,var(--orange-d)); color: #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 18px rgba(240,114,11,.35); }
+.logo svg { width: 18px; height: 18px; fill: #fff; }
+nav strong { font-size: 17px; letter-spacing: -.02em; }
+nav .spacer { flex: 1 }
+nav a.nav-link { color: var(--soft); font-weight: 500; font-size: 14px; }
+nav a.nav-link:hover { color: var(--ink); }
+
+.btn { display: inline-flex; align-items: center; gap: 8px; border-radius: 12px; padding: 12px 22px; font-weight: 600; font-size: 15px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); transition: all .15s; }
+.btn:hover { background: #F1EFE9; }
+.btn-primary { background: linear-gradient(160deg,#FF8F33,var(--orange) 55%,var(--orange-d)); border: none; color: #fff; box-shadow: 0 8px 22px rgba(240,114,11,.35); }
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 10px 26px rgba(240,114,11,.45); }
+.btn-green { background: var(--green); border: none; color: #fff; }
+.btn-green:hover { background: #174A32; }
+
+.hero { display: grid; grid-template-columns: 1.1fr .9fr; gap: 48px; align-items: center; padding: 64px 0 80px; }
+.hero h1 { font-size: clamp(32px, 5vw, 52px); line-height: 1.12; letter-spacing: -.03em; font-weight: 800; }
+.hero h1 em { font-style: normal; color: var(--orange); }
+.hero p.lead { margin: 20px 0 30px; font-size: 18px; color: var(--soft); max-width: 480px; }
+.hero .cta { display: flex; gap: 12px; flex-wrap: wrap; }
+.hero .note { margin-top: 14px; font-size: 13px; color: var(--soft); }
+
+.phone { width: 280px; height: 560px; margin: 0 auto; border-radius: 32px; background: linear-gradient(165deg,#17513A,#0E3A28 70%,#092B1E); box-shadow: 0 40px 80px rgba(10,30,20,.35); position: relative; overflow: hidden; border: 6px solid #fff; }
+.phone .avatar { position: absolute; inset: 0 0 34% 0; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,.9); }
+.phone .avatar svg { width: 72px; height: 72px; opacity: .5; }
+.phone .ui { position: absolute; left: 0; right: 0; bottom: 0; padding: 16px; display: flex; flex-direction: column; gap: 10px; color: #fff; background: linear-gradient(180deg, transparent, rgba(0,0,0,.6) 60%); }
+.phone .tag { align-self: flex-start; font-size: 11px; font-weight: 700; background: rgba(20,30,25,.5); border-radius: 999px; padding: 3px 10px; }
+.phone .q { font-weight: 700; font-size: 16px; }
+.phone .orbs { display: flex; gap: 12px; justify-content: center; padding: 6px 0; }
+.orb { width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(160deg,#FF8F33,var(--orange) 55%,var(--orange-d)); display: flex; align-items: center; justify-content: center; color: #fff; box-shadow: 0 6px 16px rgba(240,114,11,.45); }
+.orb.outline { background: transparent; border: 1.5px solid rgba(255,255,255,.85); box-shadow: none; }
+.orb svg { width: 20px; height: 20px; }
+.phone .go { text-align: center; background: linear-gradient(160deg,#FF8F33,var(--orange) 55%,var(--orange-d)); color: #fff; font-weight: 700; font-size: 14px; border-radius: 12px; padding: 12px; }
+
+.badges { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 26px; }
+.badge { font-size: 13px; font-weight: 600; color: var(--green); background: var(--green-soft); border-radius: 999px; padding: 6px 14px; }
+
+.section { padding: 64px 0; }
+.section h2 { font-size: clamp(26px, 3.5vw, 38px); letter-spacing: -.02em; text-align: center; margin-bottom: 12px; }
+.section .sub { text-align: center; color: var(--soft); margin-bottom: 44px; font-size: 17px; }
+
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 28px 26px; transition: box-shadow .18s, transform .18s; }
+.card:hover { box-shadow: 0 12px 34px rgba(29,42,36,.1); transform: translateY(-2px); }
+.card .ico { width: 48px; height: 48px; border-radius: 14px; background: var(--green-soft); color: var(--green); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; }
+.card .ico.orange { background: #FFF0E2; color: var(--orange); }
+.card .ico svg { width: 24px; height: 24px; }
+.card h3 { font-size: 18px; margin-bottom: 8px; letter-spacing: -.01em; }
+.card p { font-size: 14.5px; color: var(--soft); }
+
+.steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; counter-reset: step; }
+.step { position: relative; padding: 26px 22px; background: var(--surface); border: 1px solid var(--line); border-radius: 20px; }
+.step .num { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(160deg,#FF8F33,var(--orange)); color: #fff; font-weight: 800; display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
+.step h3 { font-size: 16px; margin-bottom: 6px; }
+.step p { font-size: 13.5px; color: var(--soft); }
+
+.cta-band { background: linear-gradient(160deg,#17513A,#0E3A28); border-radius: 28px; padding: 56px 48px; text-align: center; color: #fff; }
+.cta-band h2 { font-size: clamp(24px, 3.5vw, 36px); letter-spacing: -.02em; margin-bottom: 12px; }
+.cta-band p { color: rgba(255,255,255,.85); margin-bottom: 28px; }
+
+footer { padding: 32px 0 48px; color: var(--soft); font-size: 13.5px; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+
+@media (max-width: 860px) {
+  .hero { grid-template-columns: 1fr; padding-top: 32px; text-align: left; }
+  .grid, .steps { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 560px) { .grid, .steps { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<nav>
+  <div class="logo"><svg viewBox="0 0 24 24"><path d="M6 4.5v15a1 1 0 0 0 1.5.9l12-7.5a1 1 0 0 0 0-1.8l-12-7.5A1 1 0 0 0 6 4.5Z"/></svg></div>
+  <strong>VideoAsk Clone</strong>
+  <span class="spacer"></span>
+  <a class="nav-link" href="#features">Возможности</a>
+  <a class="nav-link" href="#how">Как это работает</a>
+  <a class="btn btn-primary" href="/">Открыть кабинет</a>
+</nav>
+</div>
+
+<header class="wrap">
+  <div class="hero">
+    <div>
+      <h1>Видео-диалог с каждым клиентом <em>без звонков</em></h1>
+      <p class="lead">Запишите видео-вопросы один раз — ваши клиенты ответят видео, аудио или текстом в удобный момент. Сценарии с ветвлением подстраивают следующий вопрос под ответ.</p>
+      <div class="cta">
+        <a class="btn btn-primary" href="/">Создать первую форму</a>
+        <a class="btn" href="/landing#how">Как это работает</a>
+      </div>
+      <p class="note">Без установки • Работает в браузере • Камера и микрофон — всё, что нужно</p>
+      <div class="badges">
+        <span class="badge">🎬 Видео-вопросы 9:16</span>
+        <span class="badge">🔘 Сценарии с ветвлением</span>
+        <span class="badge">🟢 Виджет-аватар на сайт</span>
+        <span class="badge">📥 Все ответы в одном inbox</span>
+      </div>
+    </div>
+    <div class="phone">
+      <div class="avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2"/></svg></div>
+      <div class="ui">
+        <span class="tag">шаг 1 из 3</span>
+        <div class="q">Привет! Расскажите о себе — я записал для вас короткое видео</div>
+        <div class="orbs">
+          <div class="orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2"/></svg></div>
+          <div class="orb outline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg></div>
+          <div class="orb outline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 6.1H3"/><path d="M21 12.1H3"/><path d="M15.1 18H3"/></svg></div>
+        </div>
+        <div class="go">Следующий шаг →</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="wrap section" id="features">
+  <h2>Всё для живого диалога</h2>
+  <p class="sub">Записывайте вопросы с камеры — респонденты видят вас, а не безликую форму</p>
+  <div class="grid">
+    <div class="card">
+      <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2"/></svg></div>
+      <h3>Видео-вопросы 9:16</h3>
+      <p>Запись с камеры в вертикальном формате или загрузка готового файла. Живое превью во время записи — вы всегда видите, что пишете.</p>
+    </div>
+    <div class="card">
+      <div class="ico orange"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 12h8"/><path d="M12 8v8"/></svg></div>
+      <h3>Сценарии с ветвлением</h3>
+      <p>Кнопки-варианты ведут к разным шагам: выбрал «Senior» — одно видео, «Junior» — другое. Переходы настраиваются в пару кликов.</p>
+    </div>
+    <div class="card">
+      <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg></div>
+      <h3>Ответы видео, аудио и текстом</h3>
+      <p>Респондент сам выбирает формат: запись с веб-камеры, голосом или коротким текстом. Всё попадает в ваш inbox.</p>
+    </div>
+    <div class="card">
+      <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 12h18"/></svg></div>
+      <h3>Виджет-аватар на сайт</h3>
+      <p>Маленький кружок с вашим видео в углу страницы: клик — и открывается вертикальная карточка диалога. Одна строка кода для установки.</p>
+    </div>
+    <div class="card">
+      <div class="ico orange"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11Z"/></svg></div>
+      <h3>Единый inbox</h3>
+      <p>Кто прошёл сценарий, кто бросил на середине, кто что ответил — статусы, контакты и все медиа в одном списке.</p>
+    </div>
+    <div class="card">
+      <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg></div>
+      <h3>Просто в запуске</h3>
+      <p>Node.js + одна команда. Без внешних сервисов и ключей: данные и видео хранятся на вашем сервере.</p>
+    </div>
+  </div>
+</section>
+
+<section class="wrap section" id="how">
+  <h2>Как это работает</h2>
+  <p class="sub">От первой записи до первого ответа — меньше пяти минут</p>
+  <div class="steps">
+    <div class="step"><div class="num">1</div><h3>Создайте форму</h3><p>Название — и форма уже опубликована, ссылка готова.</p></div>
+    <div class="step"><div class="num">2</div><h3>Запишите шаги</h3><p>Видео с камеры или файл. Открытые вопросы или кнопки-сценарии.</p></div>
+    <div class="step"><div class="num">3</div><h3>Поделитесь</h3><p>Ссылка, iframe или виджет-аватар прямо на вашем сайте.</p></div>
+    <div class="step"><div class="num">4</div><h3>Получите ответы</h3><p>Видео, аудио и тексты респондентов — в вашем inbox с контактами.</p></div>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="cta-band">
+    <h2>Готовы заговорить с клиентами лицом к лицу?</h2>
+    <p>Создайте первую видео-форму прямо сейчас — это займёт пару минут.</p>
+    <a class="btn btn-primary" href="/">Открыть кабинет</a>
+  </div>
+</section>
+
+<div class="wrap">
+<footer>
+  <span>VideoAsk Clone — асинхронные видео-формы</span>
+  <span>Кабинет: <a href="/" style="color: var(--green); font-weight: 600;">главная страница приложения</a></span>
+</footer>
+</div>
+
+</body>
+</html>

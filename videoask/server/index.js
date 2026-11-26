@@ -19,6 +19,10 @@ const upload = multer({ storage, limits: { fileSize: 100 * 1024 * 1024 } });
 app.use('/media', express.static(store.UPLOADS_DIR));
 app.use('/embed', express.static(path.join(__dirname, 'public')));
 
+app.get('/landing', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'landing.html'));
+});
+
 function rowToForm(f) {
   return { ...f, collect_contact: !!f.collect_contact };
 }

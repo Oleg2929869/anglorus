@@ -140,7 +140,12 @@ export default function Respond() {
         </div>
         <button className="avatar-fab" onClick={() => setExpanded(true)} aria-label="Открыть видео-форму">
           {firstVideo ? (
-            <video src={`/${firstVideo}`} muted loop autoPlay playsInline />
+            <video
+              src={`/${firstVideo}`}
+              muted loop autoPlay playsInline
+              style={{ objectPosition: 'center 20%' }}
+              onLoadedData={(e) => { try { e.currentTarget.currentTime = 0.1; } catch {} }}
+            />
           ) : (
             <span className="fab-fallback"><TextIcon size={32} /></span>
           )}

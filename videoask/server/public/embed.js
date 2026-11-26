@@ -38,6 +38,11 @@
     vid.src = opts.avatarVideo;
     vid.muted = true; vid.loop = true; vid.autoplay = true;
     vid.setAttribute('playsinline', '');
+    vid.style.objectFit = 'cover';
+    vid.style.objectPosition = 'center 20%';
+    vid.addEventListener('loadeddata', function () {
+      try { vid.currentTime = 0.1; } catch (e) {}
+    });
     fab.appendChild(vid);
   } else if (opts.avatar) {
     var img = document.createElement('img');

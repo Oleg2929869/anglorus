@@ -25,7 +25,9 @@ function rowToForm(f) {
 function formWithQuestions(f) {
   const questions = store.formQuestions(f.id).map((q) => ({
     ...q,
+    type: q.type || 'open',
     allowed_answers: JSON.parse(q.allowed_answers),
+    options: q.options ? JSON.parse(q.options) : [],
   }));
   return { ...rowToForm(f), questions };
 }
@@ -64,6 +66,7 @@ app.post(
     if (!f) return res.status(404).json({ error: 'not_found' });
     const prompt = (req.body.prompt || '').trim();
     if (!prompt) return res.status(400).json({ error: 'prompt_required' });
+    const type = req.body.type === 'choice' ? 'choice' : 'open';
     const allowed = (() => {
       try {
         const parsed = JSON.parse(req.body.allowed_answers || '["video","audio","text"]');
@@ -72,10 +75,25 @@ app.post(
         return ['video', 'audio', 'text'];
       }
     })();
+    const options = (() => {
+      if (type !== 'choice') return [];
+      try {
+        const parsed = JSON.parse(req.body.options || '[]');
+        if (!Array.isArray(parsed)) return [];
+        return parsed
+          .map((o) => ({ id: store.uid('opt'), label: String(o.label || '').trim(), next: o.next || null }))
+          .filter((o) => o.label);
+      } catch {
+        return [];
+      }
+    })();
+    if (type === 'choice' && options.length < 1) return res.status(400).json({ error: 'options_required' });
     store.addQuestion(f.id, {
       prompt,
+      type,
       media_path: req.file ? 'media/' + req.file.filename : null,
       allowed_answers: allowed,
+      options,
     });
     res.status(201).json(formWithQuestions(f));
   }
@@ -104,7 +122,14 @@ app.post(
     const q = store.getQuestion(req.body.question_id);
     if (!q || q.form_id !== r.form_id) return res.status(400).json({ error: 'invalid_question' });
     const kind = req.body.kind;
-    if (!['video', 'audio', 'text'].includes(kind)) return res.status(400).json({ error: 'invalid_kind' });
+    if (!['video', 'audio', 'text', 'choice'].includes(kind)) return res.status(400).json({ error: 'invalid_kind' });
+    if (kind === 'choice') {
+      const options = JSON.parse(q.options || '[]');
+      const option = options.find((o) => o.id === req.body.option_id);
+      if (!option) return res.status(400).json({ error: 'invalid_option' });
+      const a = store.addAnswer({ response_id: r.id, question_id: q.id, kind, text_value: option.label });
+      return res.status(201).json({ id: a.id, question_id: q.id, kind: a.kind, next: option.next });
+    }
     const text_value = kind === 'text' ? (req.body.text || '').trim() : null;
     if (kind === 'text' && !text_value) return res.status(400).json({ error: 'text_required' });
     if (kind !== 'text' && !req.file) return res.status(400).json({ error: 'media_required' });

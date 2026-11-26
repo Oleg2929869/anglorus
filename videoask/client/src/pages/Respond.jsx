@@ -8,7 +8,7 @@ const KIND_LABEL = { video: '🎬 видео', audio: '🎤 аудио', text: '
 export default function Respond() {
   const { id } = useParams();
   const [form, setForm] = useState(null);
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(0); // индекс вопроса в form.questions
   const [text, setText] = useState('');
   const [done, setDone] = useState(false);
   const [error, setError] = useState(null);
@@ -36,37 +36,67 @@ export default function Respond() {
     return responseIdRef.current;
   }
 
-  const question = form && form.questions[step];
-  const isLastQuestion = form && step === form.questions.length - 1;
-  const needContact = form && form.collect_contact;
+  function markDone() {
+    setDone(true);
+    doneRef.current = true;
+  }
 
-  async function handleNext() {
-    if (!question) return;
-    setError(null);
-    if (!rec.file && question.allowed_answers.includes('text') === false) {
-      setError('Запишите ответ перед продолжением');
+  // Определяет следующий шаг после ответа на вопрос q
+  function stepAfter(q, chosenOptionNext) {
+    const idx = form.questions.findIndex((x) => x.id === q.id);
+    if (q.type === 'choice' && chosenOptionNext) {
+      if (chosenOptionNext === 'end') return 'finish';
+      const target = form.questions.findIndex((x) => x.id === chosenOptionNext);
+      if (target >= 0) return target;
+    }
+    return idx >= form.questions.length - 1 ? 'finish' : idx + 1;
+  }
+
+  async function submitOpenAnswer(q) {
+    if (!rec.file && !text.trim()) {
+      setError('Запишите ответ или введите текст');
       return;
     }
-    if (question.allowed_answers.includes('text') && !rec.file && !text.trim()) {
+    const rid = await ensureResponse();
+    if (rec.file) {
+      const kind = rec.file.type.startsWith('audio') ? 'audio' : 'video';
+      await submitAnswer(rid, { questionId: q.id, kind, mediaFile: rec.file });
+    } else {
+      await submitAnswer(rid, { questionId: q.id, kind: 'text', text: text.trim() });
+    }
+    rec.reset();
+    setText('');
+  }
+
+  async function handleNext() {
+    const q = form.questions[step];
+    if (!q) return;
+    setError(null);
+    if (q.type !== 'choice' && !q.allowed_answers.some((k) => rec.file || text.trim())) {
       setError('Запишите ответ или введите текст');
       return;
     }
     setSubmitting(true);
     try {
+      if (q.type === 'choice') return; // обрабатывается в handleChoice
+      await submitOpenAnswer(q);
+      const next = stepAfter(q, null);
+      setStep(next);
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  async function handleChoice(q, option) {
+    setError(null);
+    setSubmitting(true);
+    try {
       const rid = await ensureResponse();
-      if (rec.file) {
-        const kind = rec.file.type.startsWith('audio') ? 'audio' : 'video';
-        await submitAnswer(rid, { questionId: question.id, kind, mediaFile: rec.file });
-      } else {
-        await submitAnswer(rid, { questionId: question.id, kind: 'text', text: text.trim() });
-      }
-      rec.reset();
-      setText('');
-      if (isLastQuestion) {
-        setStep(form.questions.length);
-      } else {
-        setStep(step + 1);
-      }
+      const res = await submitAnswer(rid, { questionId: q.id, kind: 'choice', optionId: option.id });
+      const next = stepAfter(q, res.next ?? option.next);
+      setStep(next);
     } catch (e) {
       setError(e.message);
     } finally {
@@ -84,8 +114,7 @@ export default function Respond() {
         contactName: contact.name,
         contactEmail: contact.email,
       });
-      setDone(true);
-      doneRef.current = true;
+      markDone();
     } catch (err) {
       setError(err.message);
     } finally {
@@ -106,21 +135,43 @@ export default function Respond() {
     );
   }
 
-  const showContactStep = step === form.questions.length && needContact;
+  const question = typeof step === 'number' ? form.questions[step] : null;
+  const showContactStep = step === 'finish' && form.collect_contact;
+  const showByeStep = step === 'finish' && !form.collect_contact;
 
   return (
     <div className="page respond">
       <div className="respond-card card">
         <div className="respond-header">
           <h1>{form.title}</h1>
-          <span className="muted">
-            {showContactStep ? 'Почти готово' : `Вопрос ${step + 1} из ${form.questions.length}`}
-          </span>
+          {question && <span className="muted">шаг {step + 1} из {form.questions.length}</span>}
         </div>
 
         {form.questions.length === 0 && <p className="muted">В этой форме пока нет вопросов.</p>}
 
-        {!showContactStep && question && (
+        {question && question.type === 'choice' && (
+          <>
+            {question.media_path && (
+              <video className="question-video big" src={`/${question.media_path}`} controls autoPlay />
+            )}
+            <p className="prompt">{question.prompt}</p>
+            <div className="choices">
+              {question.options.map((o) => (
+                <button
+                  key={o.id}
+                  className="choice-btn"
+                  disabled={submitting}
+                  onClick={() => handleChoice(question, o)}
+                >
+                  {o.label}
+                </button>
+              ))}
+            </div>
+            {error && <div className="error">{error}</div>}
+          </>
+        )}
+
+        {question && question.type !== 'choice' && (
           <>
             {question.media_path && (
               <video className="question-video big" src={`/${question.media_path}`} controls autoPlay />
@@ -156,7 +207,7 @@ export default function Respond() {
             )}
             {rec.error && <div className="error">{rec.error}</div>}
             <button className="next" onClick={handleNext} disabled={submitting}>
-              {isLastQuestion ? 'Далее →' : 'Следующий вопрос →'}
+              {stepAfter(question, null) === 'finish' ? 'Далее →' : 'Следующий шаг →'}
             </button>
           </>
         )}
@@ -181,32 +232,21 @@ export default function Respond() {
           </form>
         )}
 
-        {!needContact && step === form.questions.length && !done && (
-          <ContactlessFinish onDone={() => { setDone(true); doneRef.current = true; }} responseRef={responseIdRef} />
+        {showByeStep && (
+          <button className="primary" onClick={async () => {
+            setSubmitting(true);
+            try {
+              const rid = await ensureResponse();
+              await finishResponse(rid, { status: 'completed' });
+              markDone();
+            } finally {
+              setSubmitting(false);
+            }
+          }} disabled={submitting}>
+            ✅ Отправить ответы
+          </button>
         )}
       </div>
     </div>
-  );
-}
-
-function ContactlessFinish({ onDone, responseRef }) {
-  const [busy, setBusy] = useState(false);
-  return (
-    <button
-      className="primary"
-      disabled={busy}
-      onClick={async () => {
-        setBusy(true);
-        try {
-          const rid = responseRef.current;
-          if (rid) await finishResponse(rid, { status: 'completed' });
-          onDone();
-        } finally {
-          setBusy(false);
-        }
-      }}
-    >
-      ✅ Отправить ответы
-    </button>
   );
 }

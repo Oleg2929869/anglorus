@@ -28,10 +28,12 @@ export function deleteForm(id) {
   return api(`/api/forms/${id}`, { method: 'DELETE' });
 }
 
-export function addQuestion(formId, { prompt, allowedAnswers, mediaFile }) {
+export function addQuestion(formId, { prompt, type, allowedAnswers, options, mediaFile }) {
   const fd = new FormData();
   fd.append('prompt', prompt);
+  fd.append('type', type);
   fd.append('allowed_answers', JSON.stringify(allowedAnswers));
+  if (type === 'choice') fd.append('options', JSON.stringify(options));
   if (mediaFile) fd.append('media', mediaFile);
   return api(`/api/forms/${formId}/questions`, { method: 'POST', body: fd });
 }
@@ -44,12 +46,13 @@ export function startResponse(formId) {
   return api(`/api/forms/${formId}/responses`, { method: 'POST' });
 }
 
-export function submitAnswer(responseId, { questionId, kind, mediaFile, text }) {
+export function submitAnswer(responseId, { questionId, kind, mediaFile, text, optionId }) {
   const fd = new FormData();
   fd.append('question_id', questionId);
   fd.append('kind', kind);
   if (mediaFile) fd.append('media', mediaFile);
   if (text != null) fd.append('text', text);
+  if (optionId != null) fd.append('option_id', optionId);
   return api(`/api/responses/${responseId}/answers`, { method: 'POST', body: fd });
 }
 

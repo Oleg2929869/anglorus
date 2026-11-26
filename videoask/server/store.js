@@ -79,7 +79,7 @@ function formQuestions(formId) {
     .sort((a, b) => a.position - b.position || (a.id < b.id ? -1 : 1));
 }
 
-function addQuestion(formId, { prompt, media_path, allowed_answers }) {
+function addQuestion(formId, { prompt, media_path, allowed_answers, type, options }) {
   const position = formQuestions(formId).length + 1;
   const q = {
     id: uid('q'),
@@ -87,7 +87,9 @@ function addQuestion(formId, { prompt, media_path, allowed_answers }) {
     position,
     prompt,
     media_path: media_path || null,
+    type: type || 'open',
     allowed_answers: JSON.stringify(allowed_answers),
+    options: JSON.stringify(options || []),
   };
   db.questions.push(q);
   save();

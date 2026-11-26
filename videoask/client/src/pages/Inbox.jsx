@@ -51,8 +51,8 @@ export default function Inbox() {
                   {r.answers.map((a) => (
                     <div key={a.id} className="answer">
                       <div className="muted small">{questionById[a.question_id]?.prompt}</div>
-                      {a.kind === 'text' ? (
-                        <p>{a.text_value}</p>
+                      {['text', 'choice'].includes(a.kind) ? (
+                        <p>{a.kind === 'choice' ? '🔘 ' : ''}{a.text_value}</p>
                       ) : a.kind === 'audio' ? (
                         <audio src={`/${a.media_path}`} controls />
                       ) : (

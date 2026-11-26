@@ -370,11 +370,10 @@ input:focus, textarea:focus, select:focus {
 .rec-orb:hover { transform: scale(1.06); box-shadow: 0 8px 26px rgba(240, 114, 11, 0.6); }
 .rec-orb small { font-size: 11px; font-weight: 700; letter-spacing: .03em; opacity: .95; }
 .rec-orb-sm {
-  width: 58px; height: 58px; font-size: 21px;
-  background: transparent; border: 1.5px solid var(--orange);
+  background: transparent; border: 2px solid rgba(255,255,255,.85);
   box-shadow: none; color: #fff;
 }
-.rec-orb-sm:hover { background: rgba(240, 114, 11, 0.25); box-shadow: none; }
+.rec-orb-sm:hover { background: rgba(255,255,255,.18); box-shadow: none; }
 .phone-novideo {
   position: absolute; inset: 0;
   background: linear-gradient(165deg, #17513A 0%, #0E3A28 70%, #092B1E 100%);
@@ -400,4 +399,14 @@ input:focus, textarea:focus, select:focus {
 .novideo-badge {
   background: #FDE7E7; color: #B02A2A; font-size: 11px; font-weight: 700;
   border-radius: 999px; padding: 2px 10px;
+}
+
+/* Единые размеры кнопок */
+.phone-ui .next, .stop-btn, .phone-ui .primary.wide, .choice-btn {
+  min-height: 52px; font-size: 16px; border-radius: 14px;
+}
+.phone-ui .choice-btn { padding: 14px 18px; }
+.row-actions a, .row-actions button, .share button {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 40px; padding: 0 16px; font-size: 14px;
 }

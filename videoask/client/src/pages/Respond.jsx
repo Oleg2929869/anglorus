@@ -184,17 +184,22 @@ export default function Respond() {
                 <p className="prompt">{question.prompt}</p>
 
                 {question.type === 'choice' ? (
-                  <div className="choices">
-                    {question.options.map((o, i) => (
-                      <button
-                        key={o.id}
-                        className={'choice-btn' + (i > 0 ? ' outline' : '')}
-                        disabled={submitting}
-                        onClick={() => handleChoice(question, o)}
-                      >
-                        {o.label}
-                      </button>
-                    ))}
+                  <div className="choices-wrap">
+                    <div className="choices">
+                      {question.options.map((o, i) => (
+                        <button
+                          key={o.id}
+                          className={'choice-btn' + (i > 0 ? ' outline' : '')}
+                          disabled={submitting}
+                          onClick={() => handleChoice(question, o)}
+                        >
+                          {o.label}
+                        </button>
+                      ))}
+                    </div>
+                    {stepAfter(question, null) === 'finish' && (
+                      <p className="hint-onvideo">Это последний шаг — после выбора форма завершится</p>
+                    )}
                   </div>
                 ) : (
                   <>
@@ -230,7 +235,7 @@ export default function Respond() {
                     )}
                     {rec.error && <div className="error">{rec.error}</div>}
                     <button className="next" onClick={handleNext} disabled={submitting}>
-                      {stepAfter(question, null) === 'finish' ? 'Отправить →' : 'Далее →'}
+                      {stepAfter(question, null) === 'finish' ? 'Завершить ✓' : 'Следующий шаг →'}
                     </button>
                   </>
                 )}

@@ -349,3 +349,8 @@ input:focus, textarea:focus, select:focus {
 .review-wrap { display: flex; align-items: flex-start; gap: 10px; flex-wrap: wrap; }
 .phone-ui .live-wrap { width: 120px; }
 .phone-ui .live-video { width: 120px; border-color: var(--orange); }
+
+.hint-onvideo {
+  margin: 4px 0 0; font-size: 13px; color: rgba(255,255,255,.8);
+  text-align: center;
+}

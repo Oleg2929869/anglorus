@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { InboxIcon, PlayIcon, TrashIcon, FilmIcon } from '../Icons.jsx';
 import { getForms, createForm, deleteForm } from '../api.js';
 
 export default function Dashboard() {
@@ -34,7 +35,7 @@ export default function Dashboard() {
   return (
     <div className="page">
       <header className="brand">
-        <div className="brand-mark">▶</div>
+        <div className="brand-mark"><PlayIcon size={22} /></div>
         <div>
           <h1>VideoAsk Clone</h1>
           <p>асинхронные видео-формы для вашего сайта</p>
@@ -47,7 +48,7 @@ export default function Dashboard() {
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Как назовём вашу видео-форму?"
         />
-        <button className="primary" type="submit">＋ Создать форму</button>
+        <button className="primary" type="submit">Создать форму</button>
       </form>
 
       {error && <div className="error">{error}</div>}
@@ -56,7 +57,7 @@ export default function Dashboard() {
         <p>Загрузка…</p>
       ) : forms.length === 0 ? (
         <div className="empty-box">
-          <div className="empty-ico">🎬</div>
+          <div className="empty-ico"><FilmIcon size={44} /></div>
           <h3>Пока нет ни одной формы</h3>
           <p>Придумайте название выше, создайте форму —<br />и запишите первое видео-приветствие.</p>
         </div>
@@ -71,9 +72,9 @@ export default function Dashboard() {
                 </div>
               </div>
               <div className="row-actions">
-                <Link to={`/forms/${f.id}/inbox`}>📥 Ответы</Link>
-                <Link to={`/f/${f.id}`}>▶ Открыть</Link>
-                <button className="danger" onClick={() => handleDelete(f.id)}>Удалить</button>
+                <Link to={`/forms/${f.id}/inbox`}><InboxIcon /> Ответы</Link>
+                <Link to={`/f/${f.id}`}><PlayIcon /> Открыть</Link>
+                <button className="danger" onClick={() => handleDelete(f.id)}><TrashIcon /> Удалить</button>
               </div>
             </li>
           ))}

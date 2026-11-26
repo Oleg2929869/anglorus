@@ -4,6 +4,8 @@ import { getForm, addQuestion, deleteQuestion } from '../api.js';
 import { useRecorder } from '../useRecorder.js';
 import LivePreview, { useElapsed } from '../LivePreview.jsx';
 import WebmVideo from '../WebmVideo.jsx';
+import { VideoIcon, MicIcon, TextIcon, RecordIcon, StopIcon, RefreshIcon, UploadIcon, InboxIcon, PlayIcon, TrashIcon, FilmIcon } from '../Icons.jsx';
+
 
 const ALL_KINDS = ['video', 'audio', 'text'];
 const KIND_LABEL = { video: 'видео', audio: 'аудио', text: 'текст' };
@@ -75,7 +77,7 @@ export default function FormEditor() {
       <header className="topbar">
         <Link to="/">← Все формы</Link>
         <h1>{form.title}</h1>
-        <Link to={`/forms/${id}/inbox`}>📥 Ответы</Link>
+        <Link to={`/forms/${id}/inbox`}><InboxIcon /> Ответы</Link>
       </header>
 
       <div className="card share">
@@ -202,13 +204,13 @@ export default function FormEditor() {
         <div className="recorder-row">
           {!rec.recording ? (
             <button type="button" className="primary" onClick={() => rec.start('video')} disabled={saving}>
-              🔴 Записать с камеры
+              <RecordIcon /> Записать с камеры
             </button>
           ) : (
-            <button type="button" className="danger" onClick={rec.stop}>⏹ Остановить запись</button>
+            <button type="button" className="danger" onClick={rec.stop}><StopIcon /> Остановить запись</button>
           )}
           <label className="file-label">
-            📁 Загрузить файл
+            <UploadIcon /> Загрузить файл
             <input type="file" accept="video/*,audio/*" onChange={(e) => {
               const f = e.target.files[0];
               if (f) rec.setUploadedFile(f, URL.createObjectURL(f));
@@ -229,7 +231,7 @@ export default function FormEditor() {
             <WebmVideo className="question-video" src={rec.previewUrl} />
             <div className="review-info">
               <span>Записано: {(rec.file.size / 1024 / 1024).toFixed(1)} МБ</span>
-              <button type="button" onClick={() => rec.start('video')}>🔄 Перезаписать</button>
+              <button type="button" onClick={() => rec.start('video')}><RefreshIcon /> Перезаписать</button>
             </div>
           </div>
         )}

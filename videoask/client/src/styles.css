@@ -520,3 +520,13 @@ input:focus, textarea:focus, select:focus {
 .card { transition: box-shadow .18s; }
 button { border-radius: 12px; }
 h1, h2, h3 { letter-spacing: -0.02em; }
+
+/* ---------- Иконки ---------- */
+.rec-orb svg { display: block; }
+.rec-orb small { font-size: 11px; font-weight: 700; letter-spacing: .03em; }
+.stop-btn, .send-btn, .phone-ui .next { display: flex; align-items: center; justify-content: center; gap: 8px; }
+.cf-ico { display: flex; align-items: center; opacity: .9; }
+.topbar a, .row-actions a { display: inline-flex; align-items: center; gap: 6px; }
+.row-actions button { display: inline-flex; align-items: center; gap: 6px; }
+.topbar h1 { display: inline-flex; align-items: center; gap: 8px; }
+.brand-mark { display: flex; align-items: center; justify-content: center; }

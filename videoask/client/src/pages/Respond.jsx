@@ -4,6 +4,8 @@ import { getForm, startResponse, submitAnswer, finishResponse } from '../api.js'
 import { useRecorder } from '../useRecorder.js';
 import LivePreview, { useElapsed } from '../LivePreview.jsx';
 import WebmVideo from '../WebmVideo.jsx';
+import { VideoIcon, MicIcon, TextIcon, SendIcon, ArrowRightIcon, CheckIcon, StopIcon, RecordIcon, CloseIcon, RefreshIcon, UserIcon, MailIcon, FilmIcon } from '../Icons.jsx';
+
 
 export default function Respond() {
   const { id } = useParams();
@@ -140,7 +142,7 @@ export default function Respond() {
           {firstVideo ? (
             <video src={`/${firstVideo}`} muted loop autoPlay playsInline />
           ) : (
-            <span className="fab-fallback">💬</span>
+            <span className="fab-fallback"><TextIcon size={32} /></span>
           )}
           <span className="fab-badge" />
         </button>
@@ -152,7 +154,7 @@ export default function Respond() {
     <div className="widget-stage">
       <div className="widget-overlay" onClick={(e) => e.target === e.currentTarget && collapse()}>
         <div className="phone-card">
-          <button className="phone-close" onClick={collapse} aria-label="Свернуть">✕</button>
+          <button className="phone-close" onClick={collapse} aria-label="Свернуть"><CloseIcon /></button>
 
           {question && question.media_path ? (
             <WebmVideo className="phone-video-fill" src={`/${question.media_path}`} autoPlay playsInline />
@@ -164,7 +166,7 @@ export default function Respond() {
           <div className={'phone-ui' + (!done && !question && form.questions.length > 0 ? ' phone-ui--center' : '')}>
             {!done && form.questions.length === 0 && (
               <div className="empty-state">
-                <div className="empty-ico">🎬</div>
+                <div className="empty-ico"><FilmIcon size={44} /></div>
                 <p>В этой форме пока нет вопросов.</p>
                 <span>Создатель ещё записывает видео-шаги — заходите позже.</span>
               </div>
@@ -213,7 +215,7 @@ export default function Respond() {
                               onClick={() => { setShowText(false); rec.start('video'); }}
                               aria-label="Записать видео-ответ"
                             >
-                              🎬<small>Видео</small>
+                              <VideoIcon /><small>Видео</small>
                             </button>
                           )}
                           {question.allowed_answers.includes('audio') && (
@@ -223,7 +225,7 @@ export default function Respond() {
                               onClick={() => { setShowText(false); rec.start('audio'); }}
                               aria-label="Записать аудио-ответ"
                             >
-                              🎤<small>Аудио</small>
+                              <MicIcon /><small>Аудио</small>
                             </button>
                           )}
                           {question.allowed_answers.includes('text') && (
@@ -233,7 +235,7 @@ export default function Respond() {
                               onClick={() => setShowText((v) => !v)}
                               aria-label="Написать текстом"
                             >
-                              ⌨️<small>{showText ? 'Скрыть' : 'Текст'}</small>
+                              <TextIcon /><small>{showText ? 'Скрыть' : 'Текст'}</small>
                             </button>
                           )}
                         </div>
@@ -250,7 +252,7 @@ export default function Respond() {
                     {rec.recording && (
                       <>
                         <LivePreview stream={rec.liveStream} kind={rec.lastKind} elapsed={elapsed} />
-                        <button className="stop-btn" onClick={rec.stop}>⏹ Остановить запись</button>
+                        <button className="stop-btn" onClick={rec.stop}><StopIcon /> Остановить запись</button>
                       </>
                     )}
                     {rec.previewUrl && rec.file && (
@@ -261,14 +263,14 @@ export default function Respond() {
                           <WebmVideo className="preview-media" src={rec.previewUrl} />
                         )}
                         <button type="button" className="rerecord" onClick={() => rec.start(rec.lastKind)}>
-                          🔄 Перезаписать ({(rec.file.size / 1024 / 1024).toFixed(1)} МБ)
+                          <RefreshIcon /> Перезаписать ({(rec.file.size / 1024 / 1024).toFixed(1)} МБ)
                         </button>
                       </div>
                     )}
                     {rec.error && <div className="error">{rec.error}</div>}
                     {!rec.recording && (
                       <button className="next" onClick={handleNext} disabled={submitting}>
-                        {stepAfter(question, null) === 'finish' ? 'Завершить ✓' : 'Следующий шаг →'}
+                        {stepAfter(question, null) === 'finish' ? <>Завершить <CheckIcon /></> : <>Следующий шаг <ArrowRightIcon /></>}
                       </button>
                     )}
                   </>
@@ -283,7 +285,7 @@ export default function Respond() {
                   <p className="contact-sub">Оставьте контакты, чтобы получить ответ. Это необязательно.</p>
                   <div className="contact-fields">
                     <label className="contact-field">
-                      <span>👤</span>
+                      <span className="cf-ico"><UserIcon /></span>
                       <input
                         value={contact.name}
                         onChange={(e) => setContact({ ...contact, name: e.target.value })}
@@ -291,7 +293,7 @@ export default function Respond() {
                       />
                     </label>
                     <label className="contact-field">
-                      <span>✉️</span>
+                      <span className="cf-ico"><MailIcon /></span>
                       <input
                         type="email"
                         value={contact.email}
@@ -300,7 +302,7 @@ export default function Respond() {
                       />
                     </label>
                   </div>
-                  <button className="send-btn" type="submit" disabled={submitting}>✅ Отправить ответы</button>
+                  <button className="send-btn" type="submit" disabled={submitting}><SendIcon /> Отправить ответы</button>
                 </form>
               ) : (
                 <>

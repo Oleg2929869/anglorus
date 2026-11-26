@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { getForm, getResponses } from '../api.js';
+import { InboxIcon } from '../Icons.jsx';
 
 const STATUS_LABEL = {
   completed: { label: '✅ завершён', cls: 'ok' },
@@ -30,7 +31,7 @@ export default function Inbox() {
     <div className="page">
       <header className="topbar">
         <Link to={`/forms/${id}`}>← {form.title}</Link>
-        <h1>📥 Ответы ({responses.length})</h1>
+        <h1><InboxIcon size={22} /> Ответы ({responses.length})</h1>
       </header>
 
       {responses.length === 0 && <p className="muted">Ответов пока нет. Поделитесь ссылкой на форму.</p>}

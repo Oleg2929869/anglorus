@@ -324,3 +324,28 @@ input:focus, textarea:focus, select:focus {
 .empty-state span { color: rgba(255,255,255,.8); font-size: 14px; }
 .empty-ico { font-size: 44px; }
 .phone-ui .contact-form .wide { margin-top: 14px; }
+
+/* ---------- Live preview ---------- */
+.live-wrap { position: relative; width: 180px; margin: 8px 0; }
+.live-video {
+  width: 180px; aspect-ratio: 9 / 16; object-fit: cover;
+  border-radius: 12px; background: #000; display: block;
+  border: 2px solid var(--orange);
+}
+.live-mirror { transform: scaleX(-1); }
+.live-badge {
+  position: absolute; top: 8px; left: 8px;
+  background: rgba(176, 42, 42, 0.9); color: #fff;
+  font-size: 12px; font-weight: 700; border-radius: 999px; padding: 3px 10px;
+  animation: live-blink 1s step-start infinite;
+}
+@keyframes live-blink { 50% { opacity: 0.45; } }
+.live-audio {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  background: var(--green-soft); border: 1px dashed var(--green);
+  border-radius: 12px; padding: 18px; color: var(--green); font-weight: 600;
+}
+.live-ico { font-size: 30px; }
+.review-wrap { display: flex; align-items: flex-start; gap: 10px; flex-wrap: wrap; }
+.phone-ui .live-wrap { width: 120px; }
+.phone-ui .live-video { width: 120px; border-color: var(--orange); }

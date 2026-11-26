@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { getForm, addQuestion, deleteQuestion } from '../api.js';
 import { useRecorder } from '../useRecorder.js';
+import LivePreview, { useElapsed } from '../LivePreview.jsx';
 
 const ALL_KINDS = ['video', 'audio', 'text'];
 const KIND_LABEL = { video: 'видео', audio: 'аудио', text: 'текст' };
@@ -19,6 +20,7 @@ export default function FormEditor() {
   const [error, setError] = useState(null);
   const [saving, setSaving] = useState(false);
   const rec = useRecorder();
+  const elapsed = useElapsed(rec.recording, rec.startedAt);
 
   useEffect(() => { getForm(id).then(setForm).catch((e) => setError(e.message)); }, [id]);
 
@@ -211,8 +213,14 @@ export default function FormEditor() {
             }} />
           </label>
         </div>
+        {rec.recording && <LivePreview stream={rec.liveStream} kind="video" elapsed={elapsed} />}
         {rec.error && <div className="error">{rec.error}</div>}
-        {rec.previewUrl && <video className="question-video" src={rec.previewUrl} controls />}
+        {rec.previewUrl && !rec.recording && (
+          <div className="review-wrap">
+            <video className="question-video" src={rec.previewUrl} controls />
+            <button type="button" onClick={() => rec.start('video')}>🔄 Перезаписать</button>
+          </div>
+        )}
         <button className="primary wide" type="submit" disabled={saving}>
           {saving ? 'Сохранение…' : 'Добавить шаг'}
         </button>

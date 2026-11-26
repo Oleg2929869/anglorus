@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { getForm, startResponse, submitAnswer, finishResponse } from '../api.js';
 import { useRecorder } from '../useRecorder.js';
+import LivePreview, { useElapsed } from '../LivePreview.jsx';
 
 export default function Respond() {
   const { id } = useParams();
@@ -15,6 +16,7 @@ export default function Respond() {
   const responseIdRef = useRef(null);
   const doneRef = useRef(false);
   const rec = useRecorder();
+  const elapsed = useElapsed(rec.recording, rec.startedAt);
 
   const [contact, setContact] = useState({ name: '', email: '' });
 
@@ -219,10 +221,11 @@ export default function Respond() {
                         rows={3}
                       />
                     )}
-                    {rec.previewUrl && rec.file && rec.file.type.startsWith('audio') && (
+                    {rec.recording && <LivePreview stream={rec.liveStream} kind={rec.lastKind} elapsed={elapsed} />}
+                    {rec.previewUrl && !rec.recording && rec.file && rec.file.type.startsWith('audio') && (
                       <audio className="preview-media" src={rec.previewUrl} controls />
                     )}
-                    {rec.previewUrl && rec.file && !rec.file.type.startsWith('audio') && (
+                    {rec.previewUrl && !rec.recording && rec.file && !rec.file.type.startsWith('audio') && (
                       <video className="preview-media" src={rec.previewUrl} controls />
                     )}
                     {rec.error && <div className="error">{rec.error}</div>}

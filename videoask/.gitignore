@@ -1,0 +1,4 @@
+node_modules/
+videoask/server/data/
+videoask/server/uploads/
+videoask/client/dist/

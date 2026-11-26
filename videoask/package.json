@@ -1,0 +1,12 @@
+{
+  "name": "videoask-clone",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Асинхронные видео-формы: создатель записывает видео-вопросы, респонденты отвечают видео/аудио/текстом",
+  "scripts": {
+    "install:all": "npm --prefix server install && npm --prefix client install",
+    "dev": "npm --prefix server run dev & npm --prefix client run dev",
+    "build": "npm --prefix client run build",
+    "start": "npm --prefix server start"
+  }
+}

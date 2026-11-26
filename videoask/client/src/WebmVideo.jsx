@@ -1,33 +1,23 @@
 import { useEffect, useRef } from 'react';
 
-// Записи MediaRecorder в Chrome приходят без метаданных длительности
-// (duration: Infinity), из-за чего <video> показывает чёрный кадр и не
-// проигрывает файл. Пересчёт duration форсируется установкой currentTime
-// на большое число и сбросом назад.
+// Записи MediaRecorder в Chrome не содержат метаданных длительности
+// (duration: Infinity). Форсировать пересчёт большим seek нельзя — браузер
+// шлёт невыполнимый Range-запрос (416) и видео перестаёт грузиться. Здесь
+// только безопасный маленький seek на 0.1 сек, чтобы отрисовался первый
+// пригодный кадр (нулевой кадр записей часто чёрный).
 export default function WebmVideo({ src, className, autoPlay, playsInline }) {
   const ref = useRef(null);
   useEffect(() => {
     const v = ref.current;
     if (!v) return;
-    const fix = () => {
-      const seekToFrame = () => {
-        v.currentTime = Math.min(0.1, (v.duration || 1) / 10);
-        if (autoPlay) v.play().catch(() => {});
-      };
-      if (v.duration === Infinity || isNaN(v.duration)) {
-        const onSeek = () => {
-          v.removeEventListener('timeupdate', onSeek);
-          seekToFrame();
-        };
-        v.addEventListener('timeupdate', onSeek);
-        v.currentTime = 1e101;
-      } else if (!autoPlay && v.currentTime === 0) {
-        seekToFrame();
+    const seekToFrame = () => {
+      if (!autoPlay && v.readyState >= 2) {
+        try { v.currentTime = 0.1; } catch { /* недостаточно данных */ }
       }
     };
-    if (v.readyState >= 1) fix();
-    else v.addEventListener('loadedmetadata', fix, { once: true });
-    return () => v.removeEventListener('loadedmetadata', fix);
+    if (v.readyState >= 1) seekToFrame();
+    else v.addEventListener('loadeddata', seekToFrame, { once: true });
+    return () => v.removeEventListener('loadeddata', seekToFrame);
   }, [src, autoPlay]);
   return (
     <video

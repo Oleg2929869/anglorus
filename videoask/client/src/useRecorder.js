@@ -52,8 +52,20 @@ export function useRecorder() {
       streamRef.current = stream;
       setLiveStream(stream);
       setLastKind(kind);
-      const mime = kind === 'audio' ? 'audio/webm' : 'video/webm';
-      const options = MediaRecorder.isTypeSupported(mime) ? { mimeType: mime } : {};
+      // AV1 (кодек по умолчанию на части машин) отдаёт пустые данные —
+      // явно выбираем надёжный кодек из списка.
+      const candidates =
+        kind === 'audio'
+          ? ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4']
+          : [
+              'video/webm;codecs=vp8,opus',
+              'video/webm;codecs=vp9,opus',
+              'video/webm;codecs=h264,opus',
+              'video/webm',
+              'video/mp4',
+            ];
+      const mimeType = candidates.find((t) => MediaRecorder.isTypeSupported(t));
+      const options = mimeType ? { mimeType } : {};
       const recorder = new MediaRecorder(stream, options);
       mediaRef.current = recorder;
       chunksRef.current = [];

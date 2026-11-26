@@ -143,7 +143,7 @@ export default function Respond() {
             <video
               src={`/${firstVideo}`}
               muted loop autoPlay playsInline
-              style={{ objectPosition: 'center 20%' }}
+              style={{ objectPosition: 'center center' }}
               onLoadedData={(e) => { try { e.currentTarget.currentTime = 0.1; } catch {} }}
             />
           ) : (

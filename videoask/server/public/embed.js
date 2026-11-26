@@ -10,7 +10,7 @@
     'overflow:hidden;cursor:pointer;box-shadow:0 10px 30px rgba(29,42,36,.35);padding:0;background:#1E5B3E;' +
     'transition:transform .15s;animation:va-pop .5s ease,va-glow 2.4s ease-in-out infinite}' +
     '.va-fab:hover{transform:scale(1.06)}' +
-    '.va-fab img,.va-fab span{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;' +
+    '.va-fab img,.va-fab span,.va-fab video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;' +
     'display:flex;align-items:center;justify-content:center;font-size:32px;color:#fff}' +
     '.va-fab i{position:absolute;bottom:4px;right:4px;width:20px;height:20px;border-radius:50%;' +
     'background:#F0720B;border:2px solid #fff}' +

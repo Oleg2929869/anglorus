@@ -194,5 +194,23 @@ footer { padding: 32px 0 48px; color: var(--soft); font-size: 13.5px; display: f
 </footer>
 </div>
 
+
+<script>
+(function () {
+  fetch('/api/forms').then(function (r) { return r.json(); }).then(function (forms) {
+    if (!forms.length) return;
+    var formId = forms[0].id;
+    fetch('/api/forms/' + formId).then(function (r) { return r.json(); }).then(function (form) {
+      var opts = { position: 'bottom-right', text: 'Открыть видео-форму' };
+      var q = (form.questions || []).filter(function (x) { return x.media_path; })[0];
+      if (q) opts.avatarVideo = location.origin + '/' + q.media_path;
+      window.VIDEOASK_EMBED_CONFIG = { url: location.origin + '/f/' + formId, options: opts };
+      var sc = document.createElement('script');
+      sc.src = '/embed/embed.js';
+      document.body.appendChild(sc);
+    });
+  });
+})();
+</script>
 </body>
 </html>

@@ -33,7 +33,13 @@
   var fab = document.createElement('button');
   fab.className = 'va-fab va-' + (opts.position || 'bottom-right');
   fab.setAttribute('aria-label', opts.text || 'Открыть видео-форму');
-  if (opts.avatar) {
+  if (opts.avatarVideo) {
+    var vid = document.createElement('video');
+    vid.src = opts.avatarVideo;
+    vid.muted = true; vid.loop = true; vid.autoplay = true;
+    vid.setAttribute('playsinline', '');
+    fab.appendChild(vid);
+  } else if (opts.avatar) {
     var img = document.createElement('img');
     img.src = opts.avatar;
     img.alt = '';

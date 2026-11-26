@@ -253,7 +253,7 @@ export default function Respond() {
                         <button className="stop-btn" onClick={rec.stop}>⏹ Остановить запись</button>
                       </>
                     )}
-                    {rec.previewUrl && !rec.recording && rec.file && (
+                    {rec.previewUrl && rec.file && (
                       <div className="answer-ready">
                         {rec.file.type.startsWith('audio') ? (
                           <audio className="preview-media" src={rec.previewUrl} controls />
@@ -261,7 +261,7 @@ export default function Respond() {
                           <WebmVideo className="preview-media" src={rec.previewUrl} />
                         )}
                         <button type="button" className="rerecord" onClick={() => rec.start(rec.lastKind)}>
-                          🔄 Перезаписать
+                          🔄 Перезаписать ({(rec.file.size / 1024 / 1024).toFixed(1)} МБ)
                         </button>
                       </div>
                     )}

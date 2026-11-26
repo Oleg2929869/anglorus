@@ -11,6 +11,8 @@ export function useRecorder() {
   const mediaRef = useRef(null);
   const chunksRef = useRef([]);
   const streamRef = useRef(null);
+  const fileRef = useRef(null);
+  const kindRef = useRef('video');
 
   const cleanup = useCallback(() => {
     if (streamRef.current) {
@@ -24,6 +26,8 @@ export function useRecorder() {
 
   const start = useCallback(async (kind) => {
     setError(null);
+    fileRef.current = null;
+    chunksRef.current = [];
     setPreviewUrl(null);
     setFile(null);
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -51,12 +55,23 @@ export function useRecorder() {
       const recorder = new MediaRecorder(stream, options);
       mediaRef.current = recorder;
       chunksRef.current = [];
+      kindRef.current = kind;
+      const buildResult = () => {
+        if (fileRef.current || !chunksRef.current.length) return;
+        const type = recorder.mimeType || (kindRef.current === 'audio' ? 'audio/webm' : 'video/webm');
+        const blob = new Blob(chunksRef.current, { type });
+        setPreviewUrl(URL.createObjectURL(blob));
+        const file = new File([blob], 'answer.webm', { type });
+        fileRef.current = file;
+        setFile(file);
+      };
       recorder.ondataavailable = (e) => e.data.size && chunksRef.current.push(e.data);
       recorder.onstop = () => {
-        const blob = new Blob(chunksRef.current, { type: recorder.mimeType || (kind === 'audio' ? 'audio/webm' : 'video/webm') });
-        setPreviewUrl(URL.createObjectURL(blob));
-        setFile(new File([blob], 'answer.webm', { type: blob.type || (kind === 'audio' ? 'audio/webm' : 'video/webm') }));
+        buildResult();
         cleanup();
+      };
+      recorder.onerror = (e) => {
+        setError('Ошибка записи: ' + ((e.error && e.error.name) || 'unknown'));
       };
       recorder.start(1000);
       setStartedAt(Date.now());
@@ -74,16 +89,35 @@ export function useRecorder() {
   }, [cleanup]);
 
   const stop = useCallback(() => {
-    if (mediaRef.current && mediaRef.current.state !== 'inactive') mediaRef.current.stop();
+    const recorder = mediaRef.current;
+    if (recorder && recorder.state !== 'inactive') {
+      try { recorder.stop(); } catch { /* уже остановлен */ }
+    }
     setRecording(false);
-  }, []);
+    setTimeout(() => {
+      if (!fileRef.current && chunksRef.current.length) {
+        const type = recorder && recorder.mimeType
+          ? recorder.mimeType
+          : kindRef.current === 'audio' ? 'audio/webm' : 'video/webm';
+        const blob = new Blob(chunksRef.current, { type });
+        setPreviewUrl(URL.createObjectURL(blob));
+        const file = new File([blob], 'answer.webm', { type });
+        fileRef.current = file;
+        setFile(file);
+      }
+      cleanup();
+    }, 400);
+  }, [cleanup]);
 
   const setUploadedFile = useCallback((f, url) => {
+    fileRef.current = f;
     setFile(f);
     setPreviewUrl(url);
   }, []);
 
   const reset = useCallback(() => {
+    fileRef.current = null;
+    chunksRef.current = [];
     setPreviewUrl(null);
     setFile(null);
     setError(null);

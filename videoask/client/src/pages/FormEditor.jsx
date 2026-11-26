@@ -217,7 +217,7 @@ export default function FormEditor() {
         </div>
         {rec.recording && <LivePreview stream={rec.liveStream} kind="video" elapsed={elapsed} />}
         {rec.error && <div className="error">{rec.error}</div>}
-        {rec.previewUrl && !rec.recording && (
+        {rec.previewUrl && (
           <div className="review-wrap">
             <WebmVideo className="question-video" src={rec.previewUrl} />
             <div className="review-info">

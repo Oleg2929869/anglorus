@@ -15,6 +15,10 @@ export default function WebmVideo({ src, className, autoPlay, playsInline }) {
         try { v.currentTime = 0.1; } catch { /* недостаточно данных */ }
       }
     };
+    if (autoPlay) {
+      const nudge = () => { try { v.currentTime = Math.max(0.1, v.currentTime === 0 ? 0.1 : v.currentTime); } catch {} };
+      v.addEventListener('loadeddata', nudge, { once: true });
+    }
     if (v.readyState >= 1) seekToFrame();
     else v.addEventListener('loadeddata', seekToFrame, { once: true });
     return () => v.removeEventListener('loadeddata', seekToFrame);

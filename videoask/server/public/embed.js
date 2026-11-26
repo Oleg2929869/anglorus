@@ -35,7 +35,7 @@
   fab.setAttribute('aria-label', opts.text || 'Открыть видео-форму');
   if (opts.avatarVideo) {
     var vid = document.createElement('video');
-    vid.src = opts.avatarVideo;
+    vid.src = opts.avatarVideo + (opts.avatarVideo.indexOf('#') === -1 ? '#t=0.1' : '');
     vid.muted = true; vid.loop = true; vid.autoplay = true;
     vid.setAttribute('playsinline', '');
     vid.style.objectFit = 'cover';

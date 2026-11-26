@@ -141,7 +141,7 @@ export default function Respond() {
         <button className="avatar-fab" onClick={() => setExpanded(true)} aria-label="Открыть видео-форму">
           {firstVideo ? (
             <video
-              src={`/${firstVideo}`}
+              src={`/${firstVideo}#t=0.1`}
               loop playsInline
               style={{ objectFit: 'cover', objectPosition: 'center center' }}
               ref={(el) => {
@@ -172,7 +172,7 @@ export default function Respond() {
           <button className="phone-close" onClick={collapse} aria-label="Свернуть"><CloseIcon /></button>
 
           {question && question.media_path ? (
-            <WebmVideo className="phone-video-fill" src={`/${question.media_path}`} autoPlay playsInline />
+            <WebmVideo className="phone-video-fill" src={`/${question.media_path}#t=0.1`} autoPlay playsInline />
           ) : (
             <div className="phone-novideo"><span>🎥</span></div>
           )}

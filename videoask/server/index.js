@@ -23,6 +23,10 @@ app.get('/landing', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'landing.html'));
 });
 
+app.get('/embed-code', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'embed-code.html'));
+});
+
 function rowToForm(f) {
   return { ...f, collect_contact: !!f.collect_contact };
 }

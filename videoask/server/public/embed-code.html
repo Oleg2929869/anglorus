@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Код для встраивания — VideoAsk Clone</title>
+<style>
+:root { --bg:#FAF9F5; --surface:#fff; --ink:#1D2A24; --soft:#5C6B63; --orange:#F0720B; --orange-d:#D6610A; --green:#1E5B3E; --line:#E7E4DB; }
+* { box-sizing:border-box; margin:0 }
+body { background:var(--bg); color:var(--ink); font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif; line-height:1.6; -webkit-font-smoothing:antialiased; }
+.wrap { max-width: 860px; margin: 0 auto; padding: 32px 24px 80px; }
+a { color: var(--green); }
+.top { display:flex; align-items:center; gap:14px; margin-bottom: 8px; }
+.mark { width:44px; height:44px; border-radius:13px; background:linear-gradient(160deg,#FF8F33,var(--orange) 55%,var(--orange-d)); color:#fff; display:flex; align-items:center; justify-content:center; box-shadow:0 6px 18px rgba(240,114,11,.35); }
+.mark svg { width:18px; height:18px; fill:#fff }
+h1 { font-size:24px; letter-spacing:-.02em; margin-top:26px }
+.sub { color:var(--soft); margin:8px 0 22px; font-size:15px }
+.notice { background:#FFF0E2; border:1px solid #FFD9B5; color:#A8540A; border-radius:14px; padding:12px 16px; font-size:14px; margin-bottom:28px }
+.notice b { color:#C1560A }
+.btns { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:36px }
+.btn { display:inline-flex; align-items:center; gap:8px; border:none; border-radius:12px; padding:12px 20px; font:inherit; font-weight:600; font-size:14px; cursor:pointer; text-decoration:none; }
+.btn-primary { background:linear-gradient(160deg,#FF8F33,var(--orange) 55%,var(--orange-d)); color:#fff; box-shadow:0 8px 22px rgba(240,114,11,.35) }
+.btn-primary:hover { transform:translateY(-1px) }
+.btn-ghost { background:#fff; color:var(--ink); border:1px solid var(--line) }
+.btn-ghost:hover { background:#F1EFE9 }
+.btn svg { width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round }
+.block { background:var(--surface); border:1px solid var(--line); border-radius:20px; padding:24px 26px; margin-bottom:22px; box-shadow:0 1px 3px rgba(29,42,36,.05) }
+.block h2 { font-size:17px; letter-spacing:-.01em; display:flex; align-items:center; gap:10px; flex-wrap:wrap }
+.block .hint { color:var(--soft); font-size:13.5px; margin:6px 0 14px }
+.copy-row { display:flex; justify-content:flex-end; margin-bottom:8px }
+.copy { background:var(--green); border:none; color:#fff; font:inherit; font-size:12.5px; font-weight:600; border-radius:9px; padding:6px 14px; cursor:pointer }
+.copy:hover { background:#174A32 }
+.copy.done { background:#1a9e57 }
+pre { background:#15221C; color:#DCEDE3; border-radius:14px; padding:18px; overflow:auto; font-size:12.5px; line-height:1.55; font-family:ui-monospace,Consolas,monospace }
+pre .ph { color:#FFB067; font-weight:700 }
+footer { margin-top:28px; color:var(--soft); font-size:13.5px; display:flex; gap:16px; flex-wrap:wrap }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="top">
+  <div class="mark"><svg viewBox="0 0 24 24"><path d="M6 4.5v15a1 1 0 0 0 1.5.9l12-7.5a1 1 0 0 0 0-1.8l-12-7.5A1 1 0 0 0 6 4.5Z"/></svg></div>
+  <div>
+    <h1 style="margin:0">Код для встраивания</h1>
+  </div>
+</div>
+
+<p class="sub">Три способа поставить видео-форму на свой сайт — с примерами и кнопками копирования.</p>
+
+<div class="notice">
+  <b>Перед использованием:</b> замените <b>FORM_ID</b> на id вашей формы (кабинет → страница формы → плашка «Ссылка для респондентов» → <code>/f/FORM_ID</code>). Если приложение не на localhost:4000 — замените адрес на свой сервер. На публичном сайте обязателен <b>HTTPS</b>, иначе браузер заблокирует камеру.
+</div>
+
+<div class="btns">
+  <a class="btn btn-primary" href="/embed/embed-code.txt" download="videoask-embed-code.txt">
+    <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+    Скачать embed-code.txt
+  </a>
+  <a class="btn btn-ghost" href="/">Открыть кабинет</a>
+  <a class="btn btn-ghost" href="/landing">Лендинг</a>
+</div>
+
+<div class="block">
+  <h2>Вариант 1 — простой iframe</h2>
+  <p class="hint">Форма встроена прямо в контент страницы, вертикальная карточка 9:16.</p>
+  <div class="copy-row"><button class="copy" onclick="cp(this, 'c1')">Копировать</button></div>
+  <pre id="c1">&lt;div style="max-width: 420px; margin: 40px auto; aspect-ratio: 9/16;"&gt;
+  &lt;iframe
+    src="http://localhost:4000/f/<span class="ph">FORM_ID</span>"
+    style="width:100%; height:100%; border:0; border-radius: 24px; overflow:hidden;"
+    allow="camera; microphone; autoplay; fullscreen"
+    allowfullscreen
+  &gt;&lt;/iframe&gt;
+&lt;/div&gt;</pre>
+</div>
+
+<div class="block">
+  <h2>Вариант 2 — плавающий виджет-аватар</h2>
+  <p class="hint">Кружок в углу страницы, клик открывает карточку. Код вставить перед закрывающим тегом <code>&lt;/body&gt;</code>.</p>
+  <div class="copy-row"><button class="copy" onclick="cp(this, 'c2')">Копировать</button></div>
+  <pre id="c2">&lt;script src="http://localhost:4000/embed/embed.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  window.VIDEOASK_EMBED_CONFIG = {
+    url: "http://localhost:4000/f/<span class="ph">FORM_ID</span>",
+    options: {
+      position: "bottom-right",   // bottom-right | bottom-left | top-right | top-left
+      avatar: "https://ваш-сайт.ру/фото.jpg",  // или уберите строку — будет иконка
+      emoji: "💬",
+      backgroundColor: "#1E5B3E",
+      text: "Открыть видео-форму"
+    }
+  };
+&lt;/script&gt;</pre>
+</div>
+
+<div class="block">
+  <h2>Вариант 3 — виджет с мини-видео в аватаре</h2>
+  <p class="hint">В кружке играет ваше видео без звука, зациклено. Путь к файлу: кабинет → шаг с видео → адрес вида <code>/media/media_xxxxx.webm</code>.</p>
+  <div class="copy-row"><button class="copy" onclick="cp(this, 'c3')">Копировать</button></div>
+  <pre id="c3">&lt;script src="http://localhost:4000/embed/embed.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  window.VIDEOASK_EMBED_CONFIG = {
+    url: "http://localhost:4000/f/<span class="ph">FORM_ID</span>",
+    options: {
+      position: "bottom-right",
+      avatarVideo: "http://localhost:4000/media/<span class="ph">media_xxxxx.webm</span>"
+    }
+  };
+&lt;/script&gt;</pre>
+</div>
+
+<footer>
+  <span>VideoAsk Clone</span>
+  <span>Запись видео в iframe — только HTTPS или localhost</span>
+</footer>
+
+</div>
+
+<script>
+function cp(btn, id) {
+  var text = document.getElementById(id).innerText;
+  navigator.clipboard.writeText(text).then(function () {
+    btn.textContent = 'Скопировано ✓';
+    btn.classList.add('done');
+    setTimeout(function () { btn.textContent = 'Копировать'; btn.classList.remove('done'); }, 1600);
+  });
+}
+</script>
+</body>
+</html>

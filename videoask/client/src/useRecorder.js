@@ -24,7 +24,12 @@ export function useRecorder() {
     setFile(null);
     try {
       const stream = await navigator.mediaDevices.getUserMedia(
-        kind === 'audio' ? { audio: true } : { audio: true, video: true }
+        kind === 'audio'
+          ? { audio: true }
+          : {
+              audio: true,
+              video: { width: { ideal: 720 }, height: { ideal: 1280 }, facingMode: 'user' },
+            }
       );
       streamRef.current = stream;
       const mime = kind === 'audio' ? 'audio/webm' : 'video/webm';

@@ -134,7 +134,7 @@ export default function Respond() {
         </div>
         <button className="avatar-fab" onClick={() => setExpanded(true)} aria-label="Открыть видео-форму">
           {firstVideo ? (
-            <video src={`/${firstVideo}`} muted playsInline preload="metadata" />
+            <video src={`/${firstVideo}`} muted loop autoPlay playsInline />
           ) : (
             <span className="fab-fallback">💬</span>
           )}
@@ -151,28 +151,28 @@ export default function Respond() {
           <button className="phone-close" onClick={collapse} aria-label="Свернуть">✕</button>
 
           <video
-            className="phone-video"
+            className="phone-video-fill"
             src={question && question.media_path ? `/${question.media_path}` : firstVideo ? `/${firstVideo}` : undefined}
             controls
             autoPlay
+            playsInline
           />
+          <div className="phone-scrim" />
 
-          <div className="phone-body">
+          <div className="phone-ui">
             {form.questions.length === 0 && <p className="muted">В этой форме пока нет вопросов.</p>}
 
             {done && (
-              <div className="done-card card">
-                <h1>✅ Спасибо!</h1>
-                <p>Ваш ответ отправлен.</p>
-              </div>
+              <>
+                <h1 className="phone-title">✅ Спасибо!</h1>
+                <p className="muted-onvideo">Ваш ответ отправлен.</p>
+              </>
             )}
 
             {!done && question && (
               <>
-                <div className="phone-topline">
-                  <h1>{form.title}</h1>
-                  <span className="muted">шаг {step + 1}/{form.questions.length}</span>
-                </div>
+                <div className="phone-step">шаг {step + 1} из {form.questions.length}</div>
+                <h1 className="phone-title">{form.title}</h1>
                 <p className="prompt">{question.prompt}</p>
 
                 {question.type === 'choice' ? (
@@ -231,9 +231,7 @@ export default function Respond() {
             {!done && !question && (
               form.collect_contact ? (
                 <form className="contact-form" onSubmit={handleFinish}>
-                  <div className="phone-topline">
-                    <h1>Почти готово</h1>
-                  </div>
+                  <h1 className="phone-title">Почти готово</h1>
                   <input
                     value={contact.name}
                     onChange={(e) => setContact({ ...contact, name: e.target.value })}
@@ -249,9 +247,7 @@ export default function Respond() {
                 </form>
               ) : (
                 <>
-                  <div className="phone-topline">
-                    <h1>Готово!</h1>
-                  </div>
+                  <h1 className="phone-title">Готово!</h1>
                   <button
                     className="primary"
                     disabled={submitting}
